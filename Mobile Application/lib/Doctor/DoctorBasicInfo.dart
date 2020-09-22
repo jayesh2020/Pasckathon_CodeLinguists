@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
@@ -39,6 +40,7 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
   String email;
   int selectedTabIndex=0;
   AnimationController _controller;
+  int experience;
   User _user;
   String genderValue;
   Animation<Offset> _animation;
@@ -111,19 +113,21 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
 //      await uploadTask.onComplete;
 //      streamSubscription.cancel();
 //        print('abcde${widget._email}');
-      Map<String, String> map = {
+      Map<String,String>apps=Map<String,String>();
+      Map<String, dynamic> map = {
         "name": "$name",
         "phoneNumber": "$phoneNumber",
         "email": "$email",
         "clinicAddress":"$address",
         "gender":"$genderValue",
         "qualification":"$qualification",
-        "clinicSince":"$clinicSince",
+        "experience":"$experience",
         "startTime":"$startTime",
         "endTime":"$endTime",
         "registrationNumber":"$regNo",
         "city":"$city",
         "profilePic":"$downloadUrl",
+        "appointments":apps,
       };
       await collectionReference.doc(widget._uid).set(map);
 //          await storage.write(key: 'firstTime', value: 'true');
@@ -559,32 +563,25 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
                                       color: Colors.black,
                                     ),
                                   ),
-                                  DateTimeField(
-                                    onChanged: (dateTime){
+                                  TextFormField(
+                                    onChanged: (exp){
                                       setState(() {
-//                                        dateOfBirth=DateFormat('dd-MM-yyyy').format(dateTime);
-                                    clinicSince=DateFormat("dd-MM-yyyy").format(dateTime);
+//                                        dateOfBirth=DateFormat('dd-MM-yyyy').format(dateTime);\
+                                      experience=int.parse(exp);
                                       });
                                     },
                                     style: TextStyle(
                                       fontFamily: 'MontserratMed',
                                       color: Colors.black,
                                     ),
+                                    keyboardType: TextInputType.number,
                                     decoration: InputDecoration(
-                                      labelText: 'Clinic since',
+                                      labelText: 'Experience',
                                       labelStyle: TextStyle(
                                         fontFamily: 'MontserratMed',
                                         color: Colors.grey.shade500,
                                       ),
                                     ),
-                                    format: DateFormat("dd-MM-yyyy"),
-                                    onShowPicker: (context, currentValue) {
-                                      return showDatePicker(
-                                          context: context,
-                                          firstDate: DateTime(1900),
-                                          initialDate: currentValue ?? DateTime.now(),
-                                          lastDate: DateTime.now());
-                                    },
                                   ),
                                   SizedBox(height: 10,),
                                   DateTimeField(

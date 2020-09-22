@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,14 @@ import 'package:pascathon/loader.dart';
 
 class DoctorList extends StatefulWidget {
   String _disaeaseName;
-  DoctorList(this._disaeaseName);
+  String startDate;
+  int severity;
+  String prevMedicals;
+  bool day;
+  bool night;
+  String bodyPart;
+  File _file;
+  DoctorList(this._disaeaseName,this.startDate,this.severity,this.prevMedicals,this.day,this.night,this.bodyPart,this._file);
   @override
   _DoctorListState createState() => _DoctorListState();
 }
@@ -28,10 +37,10 @@ class _DoctorListState extends State<DoctorList> {
     for(int i=0;i<sna.length;i++){
       print(sna[i].data());
       print(sna[i].id);
-      if(sna[i].data()['city']==c){
+//      if(sna[i].data()['city']==c){
         list.add(sna[i].data());
         ids.add(sna[i].id);
-      }
+//      }
     }
     print(list.length);
     setState(() {
@@ -77,7 +86,12 @@ class _DoctorListState extends State<DoctorList> {
                 print(
                   'abc'
                 );
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>DoctorInfo(list[pos],ids[pos],widget._disaeaseName)));
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>DoctorInfo(list[pos],ids[pos],widget._disaeaseName,widget.startDate,
+                    widget.severity,
+                    widget.prevMedicals,
+                    widget.day,
+                    widget.night,
+                    widget.bodyPart,widget._file)));
               },
               child: Container(
                 decoration: BoxDecoration(

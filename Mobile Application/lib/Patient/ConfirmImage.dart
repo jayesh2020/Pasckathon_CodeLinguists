@@ -226,7 +226,7 @@ class _ConfirmImageState extends State<ConfirmImage> {
                   alignment: Alignment.center,
                   child: InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>QuestionAire(diseaseName)));
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>QuestionAire(diseaseName,widget._file)));
                     },
                     child: Container(
                       width: 200,

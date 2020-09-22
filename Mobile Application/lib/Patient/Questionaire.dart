@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +11,8 @@ import 'package:pascathon/Patient/DoctorList.dart';
 class QuestionAire extends StatefulWidget {
 
   String _disaeaseName;
-  QuestionAire(this._disaeaseName);
+  File _file;
+  QuestionAire(this._disaeaseName,this._file);
   @override
   _QuestionAireState createState() => _QuestionAireState();
 }
@@ -17,7 +20,6 @@ class QuestionAire extends StatefulWidget {
 class _QuestionAireState extends State<QuestionAire> {
 
   String startDate;
-  String startTime;
   int severity=0;
   String prevMedicals;
   bool day=false;
@@ -168,7 +170,12 @@ class _QuestionAireState extends State<QuestionAire> {
                       alignment: Alignment.topRight,
                       child: InkWell(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>DoctorList(widget._disaeaseName)));
+                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>DoctorList(widget._disaeaseName,startDate,
+                           severity,
+                          prevMedicals,
+                          day,
+                          night,
+                          bodyPart,widget._file)));
                         },
                         child: Container(
                           width: 100,
