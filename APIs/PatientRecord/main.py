@@ -21,7 +21,7 @@ class Block:
         return sha256(block_string.encode()).hexdigest()
 
 
-class Blockchain:
+class DataChain:
 
     difficulty = 2
 
@@ -45,7 +45,7 @@ class Blockchain:
         block.nonce = 0
 
         computed_hash = block.compute_hash()
-        while not computed_hash.startswith('0' * Blockchain.difficulty):
+        while not computed_hash.startswith('0' * DataChain.difficulty):
             block.nonce += 1
             computed_hash = block.compute_hash()
 
@@ -82,8 +82,8 @@ class Blockchain:
 app = Flask(__name__)
 
 
-blockchain = Blockchain()
-blockchain.create_genesis_block()
+datachain = DataChain()
+datachain.create_genesis_block()
 
 peers = set()
 
@@ -109,7 +109,7 @@ def new_transac():
 
     tx_data["timestamp"] = time.time()
 
-    blockchain.add_new_transaction(tx_data)
+    datachain.add_new_transaction(tx_data)
 
     return "Success", 201
 
@@ -117,7 +117,7 @@ def new_transac():
 @app.route('/chain', methods=['GET'])
 def get_chain():
     chain_data = []
-    for block in blockchain.chain:
+    for block in datachain.chain:
         chain_data.append(block.__dict__)
     return json.dumps({"length": len(chain_data),
                        "chain": chain_data})
@@ -125,14 +125,13 @@ def get_chain():
 
 @app.route('/pending_tx')
 def get_pending_tx():
-    return json.dumps(blockchain.unconfirmed_transactions)
+    return json.dumps(datachain.unconfirmed_transactions)
 
 
 @app.route('/mine')
 def mine_unconfirmed_transactions():
-    result = blockchain.mine()
+    result = datachain.mine()
     return "Successful %s" % result
-
 
 
 if __name__ == '__main__':
