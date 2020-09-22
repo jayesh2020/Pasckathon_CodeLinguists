@@ -27,6 +27,8 @@ class _ConfirmImageState extends State<ConfirmImage> {
   String diseaseName;
    RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
   final picker = ImagePicker();
+  Map<String,String>diseaseInfo;
+
 
 
 
@@ -116,6 +118,19 @@ class _ConfirmImageState extends State<ConfirmImage> {
       _btnController.success();
     }
   }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    diseaseInfo={
+      "Carcinoma":"Carcinoma is a malignancy that develops from epithelial cells. Specifically, a carcinoma is a cancer that begins in a tissue that lines the inner or outer surfaces of the body, and that arises from cells originating in the endodermal, mesodermal or ectodermal germ layer during embryogenesis.",
+      "Melanoma":"Melanoma occurs when the pigment-producing cells that give colour to the skin become cancerous.Symptoms might include a new, unusual growth or a change in an existing mole. Melanomas can occur anywhere on the body.Treatment may involve surgery, radiation, medication or in some cases, chemotherapy.",
+      "Vasculitis":"An inflammation of the blood vessels that causes changes in the blood vessel walls.Vasculitis can cause vessel walls to thicken and narrow, cutting off vital blood supply to tissues and organs.Symptoms include fever, fatigue, weight loss and muscle and joint pain.Some forms of vasculitis improve on their own. Others require medication.",
+      "Acne":"A skin condition that occurs when hair follicles plug with oil and dead skin cells.Acne is most common in teenagers and young adults.Symptoms range from uninflamed blackheads to pus-filled pimples or large, red and tender bumps.Treatments include over-the-counter creams and cleanser, as well as prescription antibiotics."
+    };
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,58 +144,64 @@ class _ConfirmImageState extends State<ConfirmImage> {
           },),
         ],
       ),
-      body: Column(
-        children: [
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
 //          GradientAppBar('Confirm Image'),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-            child: Container(
-              height: 300,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: FileImage(widget._file),
-                )
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+              child: Container(
+                height: 300,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: FileImage(widget._file),
+                  )
+                ),
               ),
             ),
-          ),
-          succ==false?CheckboxListTile(onChanged: (bool value) {
-            setState(() {
+            succ==false?CheckboxListTile(onChanged: (bool value) {
+              setState(() {
 
-              val=value;
-            });
-          }, value: val,
-            subtitle: Text('Please check to confirm',style: TextStyle(
-                color: Colors.black,fontFamily: 'MontserratReg',
-            )),
-            title: Text('We are not storing these images anywhere',style: TextStyle(
-              color: Colors.black,fontFamily: 'MontserratReg',fontSize: 14
-            ),),
-            activeColor: Color(0xFFea9b72),
+                val=value;
+              });
+            }, value: val,
+              title: Text('Check this box to indicate you have read and agree with our Terms & Conditions',style: TextStyle(
+                color: Colors.black,fontFamily: 'MontserratReg',fontSize: 14,
+//              decoration: TextDecoration.underline
+              ),),
+              activeColor: Color(0xFFea9b72),
 
-          ):Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 30,),
-                Text('The disease identified by the training model is:', style: TextStyle(
-              color: Colors.black,fontFamily: 'MontserratReg',fontSize: 15
-            ),),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(diseaseName,style: TextStyle(
-                    color: Colors.black,fontFamily: 'MontserratReg',
-                    fontSize: 20,fontWeight: FontWeight.bold
-                  )),
-                ),
-              ],
+            ):Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 30,),
+                  Text('The disease identified by the training model is:', style: TextStyle(
+                color: Colors.black,fontFamily: 'MontserratReg',fontSize: 15
+              ),),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('$diseaseName',style: TextStyle(
+                      color: Colors.black,fontFamily: 'MontserratReg',
+                      fontSize: 20,fontWeight: FontWeight.bold
+                    )),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("${diseaseInfo['Carcinoma']}",style: TextStyle(
+                        color: Colors.grey.shade500,fontFamily: 'MontserratReg',
+                        fontSize: 16,
+                    )),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40,vertical: 20),
-            child: Align(
-              alignment: Alignment.centerRight,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40,vertical: 20),
+              child: Align(
+                alignment: Alignment.centerRight,
 //              child: InkWell(
 //                onTap: ()async{
 ////                              await a
@@ -199,38 +220,39 @@ class _ConfirmImageState extends State<ConfirmImage> {
 //                  ),
 //                ),
 //              ),
-            child: succ==true?Padding(
-              padding: const EdgeInsets.only(right: 10,top: 10),
-              child: Align(
-                alignment: Alignment.center,
-                child: InkWell(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>QuestionAire(diseaseName)));
-                  },
-                  child: Container(
-                    width: 200,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12),  gradient: LinearGradient(
-                        colors: [
-                          Color(0xFFea9b72),
-                          Color(0xFFff9e33)
-                        ]
-                    )),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 20),
-                      child: Center(child: Text('Consult with Doctor',style: TextStyle( fontSize: 15,color: Colors.white,fontStyle: FontStyle.normal,fontFamily: 'MontserratSemi'),)),
+              child: succ==true?Padding(
+                padding: const EdgeInsets.only(right: 10,top: 10),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>QuestionAire(diseaseName)));
+                    },
+                    child: Container(
+                      width: 200,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12),  gradient: LinearGradient(
+                          colors: [
+                            Color(0xFFea9b72),
+                            Color(0xFFff9e33)
+                          ]
+                      )),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+                        child: Center(child: Text('Consult with Doctor',style: TextStyle( fontSize: 15,color: Colors.white,fontStyle: FontStyle.normal,fontFamily: 'MontserratSemi'),)),
+                      ),
                     ),
                   ),
                 ),
+              ):RoundedLoadingButton(
+                controller: _btnController,
+                onPressed: val?_doSomething:null,
+                color: Color(0xFFea9b72),
+                child: Center(child: Text('Predict',style: TextStyle( fontSize: 15,color: Colors.white,fontStyle: FontStyle.normal,fontFamily: 'MontserratSemi'),)),
               ),
-            ):RoundedLoadingButton(
-              controller: _btnController,
-              onPressed: val?_doSomething:null,
-              color: Color(0xFFea9b72),
-              child: Center(child: Text('Predict',style: TextStyle( fontSize: 15,color: Colors.white,fontStyle: FontStyle.normal,fontFamily: 'MontserratSemi'),)),
+              ),
             ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

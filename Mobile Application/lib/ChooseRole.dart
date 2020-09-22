@@ -154,7 +154,7 @@ class _ChooseRoleState extends State<ChooseRole> {
                             onTap: (){
 //                              await addUser();if
                             if(x==1)
-                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>BasicInfo(widget._uid)));
+                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>BasicInfo(widget._uid,widget._name,widget._phone,widget._email)));
                             else if(x==0)
                               Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>DoctorBasicInfo(widget._uid,widget._email,widget._name,widget._phone)));
                             },

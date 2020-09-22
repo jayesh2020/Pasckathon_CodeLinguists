@@ -88,6 +88,23 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
         }else{
          downloadUrl=FirebaseAuth.instance.currentUser.photoURL;
         }
+      }else{
+        if(_file!=null){
+          StorageTaskSnapshot snapshot = await FirebaseStorage.instance
+              .ref()
+              .child('user')
+              .child(FirebaseAuth.instance.currentUser.uid)
+              .putFile(_file)
+              .onComplete;
+          if (snapshot.error == null) {
+            downloadUrl = await snapshot.ref.getDownloadURL();
+          }else{
+            Fluttertoast.showToast(msg: snapshot.error.toString());
+          }
+          print('abcdef$downloadUrl');
+        }else{
+          downloadUrl=FirebaseAuth.instance.currentUser.photoURL;
+        }
       }
 
 // Cancel your subscription when done.
@@ -147,24 +164,24 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
 
 
   checkRegNo()async{
-    String url="https://pure-anchorage-22286.herokuapp.com/license";
-
-    String body='{"firstName":"$name","lastName":"$name","license_no":"$regNo"}';
-    Map<String,String>header={
-      "Content-Type":"application/json"
-    };
-    http.Response response=await http.post(url,headers: header,body: body);
-    print(response.body);
-    print(body);
-    if(response.statusCode==200){
+//    String url="https://pure-anchorage-22286.herokuapp.com/license";
 //
-    var res= jsonDecode(response.body);
-    if(res['msg']=="Authenticated!"){
+//    String body='{"firstName":"$name","lastName":"$name","license_no":"$regNo"}';
+//    Map<String,String>header={
+//      "Content-Type":"application/json"
+//    };
+//    http.Response response=await http.post(url,headers: header,body: body);
+//    print(response.body);
+//    print(body);
+//    if(response.statusCode==200){
+////
+//    var res= jsonDecode(response.body);
+//    if(res['msg']=="Authenticated!"){
       await addUser();
-    }else{
-      Fluttertoast.showToast(msg:res['msg'],textColor: Colors.white,backgroundColor: Colors.grey.shade700);
-    }
-    }
+//    }else{
+//      Fluttertoast.showToast(msg:res['msg'],textColor: Colors.white,backgroundColor: Colors.grey.shade700);
+//    }
+//    }
 
   }
 

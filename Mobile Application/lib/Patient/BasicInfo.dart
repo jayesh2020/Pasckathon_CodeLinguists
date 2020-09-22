@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:geocoder/geocoder.dart';
@@ -20,7 +24,10 @@ class BasicInfo extends StatefulWidget {
   _BasicInfoState createState() => _BasicInfoState();
 
   String _uid;
-  BasicInfo(this._uid);
+  String _name;
+  String _phoneNumber;
+  String _email;
+  BasicInfo(this._uid,this._name,this._phoneNumber,this._email);
 }
 
 class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMixin{
@@ -39,12 +46,14 @@ class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMix
   int weight =60;
   String genderValue;
   String skinToneValue;
+  final picker = ImagePicker();
   String name;
   String phoneNumber;
   String email;
   String city;
   String dateOfBirth;
   String allergies;
+  File _file;
   String otherDiseases;
   final storage=FlutterSecureStorage();
 
@@ -58,12 +67,59 @@ class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMix
 
 
 
+
+
+  Future getImagefromGallery() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      _file = File(pickedFile.path);
+//      _btnController.reset();
+    });
+  }
+
   Future<void> addUser() async {
     CollectionReference collectionReference;
       collectionReference = FirebaseFirestore.instance.collection('Patients');
       DocumentSnapshot dS = await collectionReference.doc(widget._uid).get();
       if (!dS.exists) {
 //        print('abcde${widget._email}');
+        String downloadUrl;
+        if(FirebaseAuth.instance.currentUser.photoURL!=null){
+          if(_file!=null){
+            StorageTaskSnapshot snapshot = await FirebaseStorage.instance
+                .ref()
+                .child('user')
+                .child(FirebaseAuth.instance.currentUser.uid)
+                .putFile(_file)
+                .onComplete;
+            if (snapshot.error == null) {
+              downloadUrl = await snapshot.ref.getDownloadURL();
+            }else{
+              Fluttertoast.showToast(msg: snapshot.error.toString());
+            }
+            print('abcdef$downloadUrl');
+          }else{
+            downloadUrl=FirebaseAuth.instance.currentUser.photoURL;
+          }
+        }else{
+          if(_file!=null){
+            StorageTaskSnapshot snapshot = await FirebaseStorage.instance
+                .ref()
+                .child('user')
+                .child(FirebaseAuth.instance.currentUser.uid)
+                .putFile(_file)
+                .onComplete;
+            if (snapshot.error == null) {
+              downloadUrl = await snapshot.ref.getDownloadURL();
+            }else{
+              Fluttertoast.showToast(msg: snapshot.error.toString());
+            }
+            print('abcdef$downloadUrl');
+          }else{
+            downloadUrl=FirebaseAuth.instance.currentUser.photoURL;
+          }
+        }
         Map<String, String> map = {
           "name": "$name",
           "phoneNumber": "$phoneNumber",
@@ -76,7 +132,8 @@ class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMix
           "skinTone":"$skinToneValue",
           "bloodGroup":"$bloodGroup",
           "allergies":"$allergies",
-          "otherDiseases":"$otherDiseases"
+          "otherDiseases":"$otherDiseases",
+          "profilePic":"$downloadUrl"
         };
         await collectionReference.doc(widget._uid).set(map);
 //          await storage.write(key: 'firstTime', value: 'true');
@@ -128,9 +185,9 @@ class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMix
   void initState() {
     super.initState();
       _user=FirebaseAuth.instance.currentUser;
-       name=_user.displayName;
-       phoneNumber=_user.phoneNumber;
-       email=_user.email;
+       name=widget._name;
+       phoneNumber=widget._phoneNumber;
+       email=widget._email;
     getUserLocation();
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000));
@@ -211,15 +268,15 @@ class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMix
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             TabText(
-                              text: "Personal Information",
+                              text: "Personal\nInformation",
                               isSelected: selectedTabIndex == 0,
                               onTabTap: () {
                                 onTabTap(0);
                               },
                             ),
-                            SizedBox(height: 80,),
+                            SizedBox(height: 90,),
                             TabText(
-                              text: "Medical History",
+                              text: "Medical\nHistory",
                               isSelected: selectedTabIndex == 1,
                               onTabTap: () {
                                 onTabTap(1);
@@ -239,13 +296,41 @@ class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMix
                               padding: const EdgeInsets.only(left: 30,right: 15),
                               child: Column(
                                 children: [
+                                  GestureDetector(
+                                    child: _file==null?_user.photoURL!=null?ClipOval(
+                                      child: FadeInImage.assetNetwork(placeholder: 'assets/images/placeholder.jpg', image: _user.photoURL,placeholderCacheHeight: 100,placeholderCacheWidth: 100,),
+                                    ):Container(
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                            fit: BoxFit.contain,
+                                            image: AssetImage("assets/images/placeholder.jpg"),
+                                          )
+                                      ),
+                                      height: 100,
+                                      width: 100,
+                                    ):Container(
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                            fit: BoxFit.contain,
+                                            image: FileImage(_file),
+                                          )
+                                      ),
+                                      height: 100,
+                                      width: 100,
+                                    ),
+                                    onTap: ()async{
+                                      await getImagefromGallery();
+                                    },
+                                  ),
                                   TextFormField(
                                     onChanged: (val){
                                       setState(() {
                                         name=val;
                                       });
                                     },
-                                    initialValue: _user.displayName,
+                                    initialValue: name,
                                     decoration: InputDecoration(
                                       labelText: 'Name',
                                       labelStyle: TextStyle(
@@ -265,7 +350,7 @@ class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMix
                                         phoneNumber=val;
                                       });
                                     },
-                                    initialValue: _user.phoneNumber,
+                                    initialValue: phoneNumber,
                                     decoration: InputDecoration(
                                       labelText: 'Phone Number',
                                       labelStyle: TextStyle(
@@ -286,7 +371,7 @@ class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMix
                                         email=val;
                                       });
                                     },
-                                    initialValue: _user.email,
+                                     initialValue: email,
                                     decoration: InputDecoration(
                                       labelText: 'Email',
                                       labelStyle: TextStyle(
@@ -303,7 +388,7 @@ class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMix
                                   DateTimeField(
                                     onChanged: (dateTime){
                                       setState(() {
-                                        dateOfBirth=DateFormat('dd-MM-yyyy').format(dateTime);
+                                        dateOfBirth=DateFormat('yyyy-MM-dd').format(dateTime);
                                       });
                                     },
                                     style: TextStyle(

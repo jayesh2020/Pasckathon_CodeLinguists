@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:pascathon/Patient/Dashboard.dart';
+import 'package:pascathon/main.dart';
 
 import '../loader.dart';
 
@@ -28,9 +29,9 @@ class _DoctorInfoState extends State<DoctorInfo>
   TabController _controller;
   int _currentIndex = 0;
   Color mainColour = Color(0xFFea9b72);
-  List<String> appts = List();
-  Map<String,List<String>>mapp1=Map<String,List<String>>();
-  List<String> appts1 = List();
+  List<dynamic> appts = List();
+  Map<String,List<dynamic>>mapp1;
+  List<dynamic> appts1 = List();
   @override
   void initState() {
     // TODO: implement initState
@@ -56,8 +57,11 @@ class _DoctorInfoState extends State<DoctorInfo>
       if (ds.exists) {
         if (ds.data().containsKey('appointments')) {
           setState(() {
+            print('wtf');
             mapp1=Map.from(ds.get('appointments'));
+            print(mapp1);
 //            mapp1=Map.from(ds.get('appointments'));
+////            mapp1=Map.from(ds.get('appointments'));
             appts=mapp1[DateFormat('dd-MM-yyyy').format(DateTime.now())];
             appts1=mapp1[DateFormat('dd-MM-yyyy').format(DateTime.now().add(Duration(days: 1)))];
           });
@@ -346,12 +350,15 @@ class _DoctorInfoState extends State<DoctorInfo>
                   SizedBox(
                     height: 15,
                   ),
-                  Text(
-                    'Clinic Address:-${widget._data['clinicAddress']}',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: 'MontserratMed',
-                        fontSize: 16),
+                  Center(
+                    child: Text(
+                      'Clinic Address:-${widget._data['clinicAddress']}',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'MontserratMed',
+                          fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   SizedBox(
                     height: 10,
@@ -369,11 +376,18 @@ class _DoctorInfoState extends State<DoctorInfo>
                             ),
                           ),
                         ),
+
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Divider(color: Colors.grey.shade300,thickness: 2,),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text('Slots Available for today and tomorrow',style: TextStyle( fontFamily: 'MontserratMed',
+                      fontSize: 16),),
                   SizedBox(
                     height: 20,
-                  ),
-                  SizedBox(
-                    height: 10,
                   ),
                   Row(
                     children: [
@@ -454,152 +468,150 @@ class _DoctorInfoState extends State<DoctorInfo>
                     ],
                   ),
                   _currentIndex == 0
-                      ? Flexible(
-                          child: GridView.builder(
-                            itemBuilder: (BuildContext context, int pos) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell(
-                                  onTap: appts.contains(DateFormat('HH:mm')
+                      ? appts==null?Container():GridView.builder(
+                    shrinkWrap: true,
+                        itemBuilder: (BuildContext context, int pos) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: appts.contains(DateFormat('HH:mm')
+                                      .format(startTime.add(
+                                          Duration(minutes: pos * 30))))
+                                  ? null
+                                  : () {
+                                      print(appts);
+
+                                      print(appts.contains(
+                                          DateFormat('HH:mm').format(
+                                              startTime.add(Duration(
+                                                  minutes: pos * 30)))));
+
+                                      showDialog1(
+                                          context,
+                                          DateFormat.jm().format(
+                                              startTime.add(Duration(
+                                                  minutes: pos * 30))));
+                                    },
+                              child: Container(
+                                width: 20,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+
+                                  color: appts.contains(DateFormat('HH:mm')
+                                          .format(startTime.add(
+                                              Duration(minutes: pos * 30))))
+                                      ? Colors.grey.shade500
+                                      : null,
+
+                                  gradient: appts.contains(DateFormat(
+                                              'HH:mm')
                                           .format(startTime.add(
                                               Duration(minutes: pos * 30))))
                                       ? null
-                                      : () {
-                                          print(appts);
+                                      : LinearGradient(
+                                          colors: [
+                                            Color(0xFFea9b72),
+                                            Color(0xFFff9e33)
+                                          ],
+                                        ),
 
-                                          print(appts.contains(
-                                              DateFormat('HH:mm').format(
-                                                  startTime.add(Duration(
-                                                      minutes: pos * 30)))));
-
-                                          showDialog1(
-                                              context,
-                                              DateFormat('HH:mm').format(
-                                                  startTime.add(Duration(
-                                                      minutes: pos * 30))));
-                                        },
-                                  child: Container(
-                                    width: 20,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-
-                                      color: appts.contains(DateFormat('HH:mm')
-                                              .format(startTime.add(
-                                                  Duration(minutes: pos * 30))))
-                                          ? Colors.grey.shade500
-                                          : null,
-
-                                      gradient: appts.contains(DateFormat(
-                                                  'HH:mm')
-                                              .format(startTime.add(
-                                                  Duration(minutes: pos * 30))))
-                                          ? null
-                                          : LinearGradient(
-                                              colors: [
-                                                Color(0xFFea9b72),
-                                                Color(0xFFff9e33)
-                                              ],
-                                            ),
-
-                                      //                           child: Text('${DateFormat('HH:mm').parse()}'),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Center(
-                                          child: Text(
-                                        '${DateFormat('HH:mm').format(startTime.add(Duration(minutes: pos * 30)))}',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'MontserratSemi',
-                                            fontSize: 16),
-                                      )),
-                                    ),
-                                  ),
+                                  //                           child: Text('${DateFormat('HH:mm').parse()}'),
                                 ),
-                              );
-                            },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child: Text(
+                                    '${DateFormat('HH:mm').format(startTime.add(Duration(minutes: pos * 30)))}',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'MontserratSemi',
+                                        fontSize: 16),
+                                  )),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
 
-                            //
+                        //
 
-                            //                         itemCount: ,
+                        //                         itemCount: ,
 
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 4),
+                        gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4),
 
-                            itemCount: len,
+                        itemCount: len,
 
-                            scrollDirection: Axis.vertical,
+                        scrollDirection: Axis.vertical,
 
 //    shrinkWrap: true,
-                          ),
-                        )
-                      : Flexible(
-                          child: GridView.builder(
-                            itemBuilder: (BuildContext context, int pos) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell(
-                                  onTap: appts1.contains(DateFormat('HH:mm')
+                      )
+                      : appts1==null?Container():GridView.builder(
+                    shrinkWrap: true,
+                        itemBuilder: (BuildContext context, int pos) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: appts1.contains(DateFormat('HH:mm')
+                                      .format(startTime.add(
+                                          Duration(minutes: pos * 30))))
+                                  ? null
+                                  : () {
+                                      print(appts1);
+                                      print(appts1.contains(
+                                          DateFormat('HH:mm').format(
+                                              startTime.add(Duration(
+                                                  minutes: pos * 30)))));
+                                      showDialog1(
+                                          context,
+                                          DateFormat('HH:mm').format(
+                                              startTime.add(Duration(
+                                                  minutes: pos * 30))));
+                                    },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: appts1.contains(DateFormat('HH:mm')
+                                          .format(startTime.add(
+                                              Duration(minutes: pos * 30))))
+                                      ? Colors.grey.shade500
+                                      : null,
+                                  gradient: appts1.contains(DateFormat(
+                                              'HH:mm')
                                           .format(startTime.add(
                                               Duration(minutes: pos * 30))))
                                       ? null
-                                      : () {
-                                          print(appts1);
-                                          print(appts1.contains(
-                                              DateFormat('HH:mm').format(
-                                                  startTime.add(Duration(
-                                                      minutes: pos * 30)))));
-                                          showDialog1(
-                                              context,
-                                              DateFormat('HH:mm').format(
-                                                  startTime.add(Duration(
-                                                      minutes: pos * 30))));
-                                        },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: appts1.contains(DateFormat('HH:mm')
-                                              .format(startTime.add(
-                                                  Duration(minutes: pos * 30))))
-                                          ? Colors.grey.shade500
-                                          : null,
-                                      gradient: appts1.contains(DateFormat(
-                                                  'HH:mm')
-                                              .format(startTime.add(
-                                                  Duration(minutes: pos * 30))))
-                                          ? null
-                                          : LinearGradient(
-                                              colors: [
-                                                Color(0xFFea9b72),
-                                                Color(0xFFff9e33)
-                                              ],
-                                            ),
+                                      : LinearGradient(
+                                          colors: [
+                                            Color(0xFFea9b72),
+                                            Color(0xFFff9e33)
+                                          ],
+                                        ),
 //                           child: Text('${DateFormat('HH:mm').parse()}'),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Center(
-                                          child: Text(
-                                        '${DateFormat('HH:mm').format(startTime.add(Duration(minutes: pos * 30)))}',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'MontserratSemi',
-                                            fontSize: 16),
-                                      )),
-                                    ),
-                                  ),
                                 ),
-                              );
-                            },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child: Text(
+                                    '${DateFormat('HH:mm').format(startTime.add(Duration(minutes: pos * 30)))}',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'MontserratSemi',
+                                        fontSize: 16),
+                                  )),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
 //                         itemCount: ,
-                            itemCount: len,
-                            scrollDirection: Axis.vertical,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 4),
-                          ),
-                        ),
+                        itemCount: len,
+                        scrollDirection: Axis.vertical,
+                        gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4),
+                      ),
 //            DefaultTabController(
 //              length: 2,
 //              child: Column(
@@ -697,6 +709,26 @@ class _DoctorInfoState extends State<DoctorInfo>
 //                ],
 //              ),
 //            )
+                SizedBox(height: 30,),
+                  InkWell(
+                    child: Material(
+                      elevation: 2,
+                      child: Container(
+                        width: 200,
+//                      width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5),  gradient: LinearGradient(
+                            colors: [
+                              Color(0xFFea9b72),
+                              Color(0xFFff9e33)
+                            ]
+                        )),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                          child: Center(child: Text('Book Appointment',style: TextStyle( fontSize: 16,color: Colors.white,fontStyle: FontStyle.normal,fontFamily: 'MontserratSemi'),)),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
