@@ -7,7 +7,7 @@ export const getDoctors = (uid) => async dispatch => {
     console.log(patientData);
     // or get all docs matching the query
     firestore.collection("Doctors")
-    .where("city", "==", patientData.city)
+    //.where("city", "==", patientData.city)
     .get()
     .then(querySnapshot => {
         console.log(querySnapshot);
@@ -93,6 +93,7 @@ export const generateReport = ({ patientUid, predict, doctorSearch, selectedDoct
         diseaseUrl: predict.fireBaseUrl
     };
     const res = await firestore.doc(`Doctors/${selectedDoctor.uid}`).collection('Reports').add(data);
+    const res1 = await firestore.doc(`Patients/${patientUid}`).collection('Reports').add(data);
     dispatch({
         type: 'SET_REPORT',
         payload: data
