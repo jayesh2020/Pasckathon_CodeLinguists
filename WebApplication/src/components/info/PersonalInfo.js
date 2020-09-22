@@ -25,7 +25,7 @@ const PersonalInfo = ({ history,setPersonalInfo }) => {
       city,
       gender,
       name,
-      imageAsUrl
+      profilePic:imageAsUrl.imgUrl
     };
     setToggler(true);
     setPersonalInfo(personal);

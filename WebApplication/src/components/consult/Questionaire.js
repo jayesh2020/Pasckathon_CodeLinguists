@@ -1,6 +1,8 @@
 import React,{ useState } from 'react'
+import { connect } from 'react-redux';
+import { setQuest } from '../../actions/doctorSearch';
 
-const Questionaire = () => {
+const Questionaire = ({ setQuest }) => {
     const [duration,setDuration] = useState('');
     const [severity,setSeverity] = useState('');
     const [timeOf,setTimeOf] = useState([]);
@@ -27,9 +29,13 @@ const Questionaire = () => {
                     <label htmlFor="prevMed">Any previous medications</label>
                     <textarea name="prevMed" value={prevMed} onChange={(e) => setPrevMed(e.target.value)}></textarea>
                 </div>
+                <button onClick={(e) => {
+                    e.preventDefault();
+                    setQuest({duration,severity,prevMed});
+                }}>Submit</button>
             </form>
         </div>
     )
 }
 
-export default Questionaire;
+export default connect(null,{ setQuest })(Questionaire);

@@ -76,7 +76,7 @@ const DoctorsInfo = ({ auth,info,setDoctorUser,setDoctorInfo }) => {
             type='text'
             value={qualification}
             onChange={(e) => setQualifications(e.target.value)}
-          />
+          />  
         </div>
         <div>
           <input
