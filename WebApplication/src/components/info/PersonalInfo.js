@@ -20,7 +20,7 @@ const PersonalInfo = ({ history,setPersonalInfo }) => {
   const onSubmit = (e) => {
     e.preventDefault();
     const personal = {
-      dob,
+      dateOfBirth:dob,
       phoneNumber,
       city,
       gender,
