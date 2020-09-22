@@ -62,8 +62,7 @@ useEffect(() => {
     <Provider store={store}>
       <div className='App'>
         <Router>
-          <Userinfo currentUser={currentUser} />
-          <Navbar/>
+          <Navbar />
           <Switch>
             <PublicRouter exact path='/' component={Signup} />
             <PublicRouter path='/login' component={Signin} />
@@ -73,7 +72,10 @@ useEffect(() => {
             <PrivateRouter path='/patientsinfo' component={PatientsInfo} />
             <PrivateRouter path='/doctorsinfo' component={DoctorsInfo} />
             <PrivateRouter path='/doctorsearch' component={DoctorSearch} />
-            <PrivateRouter path='/doctor/consult/:id' component={DoctorConsult} />
+            <PrivateRouter
+              path='/doctor/consult/:id'
+              component={DoctorConsult}
+            />
           </Switch>
         </Router>
       </div>
