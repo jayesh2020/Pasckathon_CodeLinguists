@@ -5,7 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:pascathon/Patient/DoctorList.dart';
+import 'package:pascathon/Patient/Questionaire.dart';
 import 'dart:io';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,7 +33,7 @@ class _ConfirmImageState extends State<ConfirmImage> {
   addDetails(String dis)async{
     CollectionReference collectionReference;
     String uid=FirebaseAuth.instance.currentUser.uid;
-    Map<String,String>mapp={'disease_name':"$dis"};
+    Map<String,String>mapp={'disease_name':"$dis","date":"${DateFormat("dd-MM-yyyy HH:mm:ss").format(DateTime.now())}"};
    await FirebaseFirestore.instance.collection('Patients').doc(uid).collection('Tests').add(mapp).then((value) =>
    print(value.id));
 
@@ -203,7 +205,7 @@ class _ConfirmImageState extends State<ConfirmImage> {
                 alignment: Alignment.center,
                 child: InkWell(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>DoctorList(diseaseName)));
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>QuestionAire(diseaseName)));
                   },
                   child: Container(
                     width: 200,

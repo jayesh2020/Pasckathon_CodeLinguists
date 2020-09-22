@@ -10,6 +10,18 @@ class DoctorDashboard extends StatefulWidget {
 class _DoctorDashboardState extends State<DoctorDashboard> {
 
   int selectedIndex=0;
+  bool load=true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
+
+  getData()async{
+
+  }
 
   @override
   Widget build(BuildContext context) {

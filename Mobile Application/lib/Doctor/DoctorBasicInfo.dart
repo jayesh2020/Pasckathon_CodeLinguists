@@ -19,12 +19,15 @@ import 'package:location/location.dart';
 import 'package:pascathon/Doctor/DoctorDashboard.dart';
 import 'package:pascathon/Patient/BasicInfo.dart';
 import 'package:pascathon/Patient/Dashboard.dart';
+import 'package:pascathon/loader.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class DoctorBasicInfo extends StatefulWidget {
-  DoctorBasicInfo(this._uid);
+  DoctorBasicInfo(this._uid,this._email,this._name,this._phoneNumber);
   String _uid;
-
+  String _name;
+  String _phoneNumber;
+  String _email;
   @override
   _DoctorBasicInfoState createState() => _DoctorBasicInfoState();
 }
@@ -43,7 +46,7 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
   TextEditingController _addressController=TextEditingController();
   String address;
   final picker = ImagePicker();
-  File _file;
+  File _file=null;
   File _certificate;
   FocusNode myFocusNode=FocusNode();
   RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
@@ -54,6 +57,7 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
   String endTime;
   String city;
   String regNo;
+  bool load=true;
   TextEditingController _cityController=TextEditingController();
 
   onTabTap(int index) {
@@ -194,6 +198,7 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
       _addressController.text= addresses.first.addressLine;
       city=addresses.first.locality;
       _cityController.text=city;
+      load=false;
 //      city=addresses.first.locality;
     });
   }
@@ -204,9 +209,10 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
     // TODO: implement initState
     super.initState();
     _user=FirebaseAuth.instance.currentUser;
-    name=_user.displayName;
-    phoneNumber=_user.phoneNumber;
-    email=_user.email;
+    print('abcd${_user.photoURL}');
+    name=widget._name;
+    phoneNumber=widget._phoneNumber;
+    email=widget._email;
     getUserLocation();
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000));
@@ -229,7 +235,7 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return load==true?Container(child: loader1,color: Colors.white,):Scaffold(
       resizeToAvoidBottomPadding: false,
       body: Stack(
         children: <Widget>[
@@ -302,9 +308,19 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
                               child: Column(
                                 children: [
                                   GestureDetector(
-                                    child: _file==null?ClipOval(
+                                    child: _file==null?_user.photoURL!=null?ClipOval(
                                       child: FadeInImage.assetNetwork(placeholder: 'assets/images/placeholder.jpg', image: _user.photoURL,placeholderCacheHeight: 100,placeholderCacheWidth: 100,),
                                     ):Container(
+                          decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                              image: DecorationImage(
+                                fit: BoxFit.contain,
+                                image: AssetImage("assets/images/placeholder.jpg"),
+                              )
+                          ),
+                          height: 100,
+                          width: 100,
+                          ):Container(
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         image: DecorationImage(
@@ -325,7 +341,7 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
                                         name=val;
                                       });
                                     },
-                                    initialValue: _user.displayName,
+                                    initialValue: widget._name,
                                     decoration: InputDecoration(
                                       labelText: 'Name',
                                       labelStyle: TextStyle(
@@ -345,7 +361,7 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
                                         phoneNumber=val;
                                       });
                                     },
-                                    initialValue: _user.phoneNumber,
+                                    initialValue: widget._phoneNumber,
                                     decoration: InputDecoration(
                                       labelText: 'Phone Number',
                                       labelStyle: TextStyle(
@@ -366,7 +382,7 @@ class _DoctorBasicInfoState extends State<DoctorBasicInfo> with SingleTickerProv
                                         email=val;
                                       });
                                     },
-                                    initialValue: _user.email,
+                                    initialValue: widget._email,
                                     decoration: InputDecoration(
                                       labelText: 'Email',
                                       labelStyle: TextStyle(

@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       collectionReference1 = FirebaseFirestore.instance.collection('Patients');
       DocumentSnapshot dS1 = await collectionReference1.doc(_user.uid).get();
-      print(_user.uid);
+      print('ghii${_user.uid}');
       print(dS1.exists);
       if(dS1.exists) {
         Navigator.push(context,
@@ -155,11 +155,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
       collectionReference1 = FirebaseFirestore.instance.collection('Patients');
       DocumentSnapshot dS1 = await collectionReference.doc(user.uid).get();
-      if(dS.exists||dS1.exists)Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>Dashboard()));
-      else
+      if(dS.exists)Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>DoctorDashboard()));
+      else if(dS1.exists){
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>Dashboard()));
+      }else
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>ChooseRole(user.displayName,user.email,user.phoneNumber,user.uid)));
 
-      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>Dashboard()));
 
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -181,7 +182,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change inst  ances of widgets.
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(

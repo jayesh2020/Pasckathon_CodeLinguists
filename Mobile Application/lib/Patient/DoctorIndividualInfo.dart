@@ -29,6 +29,7 @@ class _DoctorInfoState extends State<DoctorInfo>
   int _currentIndex = 0;
   Color mainColour = Color(0xFFea9b72);
   List<String> appts = List();
+  Map<String,List<String>>mapp1=Map<String,List<String>>();
   List<String> appts1 = List();
   @override
   void initState() {
@@ -55,12 +56,10 @@ class _DoctorInfoState extends State<DoctorInfo>
       if (ds.exists) {
         if (ds.data().containsKey('appointments')) {
           setState(() {
-            appts = List.from(ds.get('appointments'));
-          });
-        }
-        if (ds.data().containsKey('appointments1')) {
-          setState(() {
-            appts1 = List.from(ds.get('appointments1'));
+            mapp1=Map.from(ds.get('appointments'));
+//            mapp1=Map.from(ds.get('appointments'));
+            appts=mapp1[DateFormat('dd-MM-yyyy').format(DateTime.now())];
+            appts1=mapp1[DateFormat('dd-MM-yyyy').format(DateTime.now().add(Duration(days: 1)))];
           });
         }
       }
@@ -74,11 +73,19 @@ class _DoctorInfoState extends State<DoctorInfo>
     try {
       if (ind == 0) {
         appts.add(time);
+        String date=DateFormat('dd-MM-yyyy').format(DateTime.now());
         CollectionReference doctor =
         FirebaseFirestore.instance.collection('Doctors');
+//        List<String>abcd=List();
+//        abcd.add('def');
+//        abcd.add('efg');
+//        _mapp1={
+//          "abc":abcd
+//        };
+        mapp1[DateFormat('dd-MM-yyyy').format(DateTime.now())]=appts;
         doctor
             .doc(widget._uid)
-            .update({"appointments": FieldValue.arrayUnion(appts)});
+            .update({"appointments": mapp1} );
       } else {
         appts1.add(time);
         CollectionReference doctor =
@@ -99,14 +106,14 @@ class _DoctorInfoState extends State<DoctorInfo>
           .collection('Appointments').add(mapp)
           .then((value) =>
           print(value.id));
-      Map<String, String>mapp1 = {
+      Map<String, String>mapp2 = {
         'patientName': "${patientInfo.data()['name']}",
         'appointmentTime': "$time",
         "patientProfilePic": "${widget._data['profilePic']}",
         "diseasePrediction": "${widget._diseaseName}"
       };
       await FirebaseFirestore.instance.collection('Doctors').doc(widget._uid)
-          .collection('Appointments').add(mapp1)
+          .collection('Appointments').add(mapp2)
           .then((value) =>
           print(value.id));
       Navigator.pushAndRemoveUntil(
@@ -364,17 +371,6 @@ class _DoctorInfoState extends State<DoctorInfo>
                         ),
                   SizedBox(
                     height: 20,
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Book Appointment:-',
-                      style: TextStyle(
-                          fontFamily: 'MontserratMed',
-                          fontSize: 16,
-                          color:
-                              _currentIndex == 0 ? Colors.black : Colors.black),
-                    ),
                   ),
                   SizedBox(
                     height: 10,
