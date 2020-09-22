@@ -1,6 +1,7 @@
 const initialState = {
   diseaseName: '',
   description: '',
+  fireBaseUrl: '',
   error: '',
 };
 export default (state = initialState, action) => {
@@ -10,6 +11,7 @@ export default (state = initialState, action) => {
         ...state,
         diseaseName: action.payload.diseaseName,
         description: action.payload.description,
+        fireBaseUrl: action.payload.fireBaseUrl
       };
     case 'PREDICT_ERROR':
       return {

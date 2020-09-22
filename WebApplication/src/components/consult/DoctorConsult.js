@@ -1,7 +1,7 @@
 import React,{ useState, useEffect } from 'react';
 import Questionaire from './Questionaire';
 import { connect } from 'react-redux';
-import { getDoctors, getDoctor,bookAppointment } from '../../actions/doctorSearch';
+import { getDoctors, getDoctor,bookAppointment, generateReport } from '../../actions/doctorSearch';
 
 const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, bookAppointment}) => {
     const [toggler,setToggler] = useState(false);
@@ -142,12 +142,13 @@ const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, boo
             console.log(selectedDoctor);
 
     }
-    
+
     const submitRes = (e) => {
         e.preventDefault();
         console.log(selectDate);
         if(timeSlot && selectDate){
             bookAppointment({selectedDoctor, predict, timeSlot, dateOf: selectDate, patientUid:auth.uid, doctorUid: selectedDoctor.uid});
+            generateReport({ patientUid: auth.uid, predict, doctorSearch, selectedDoctor });
             history.push('/dashboard');
         }
     }

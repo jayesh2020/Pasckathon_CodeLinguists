@@ -10,7 +10,7 @@ import PrivateRouter from './routers/PrivateRoute';
 import PublicRouter from './routers/PublicRoute';
 import ImageTest from './components/layout/Test';
 import { auth, createUserProfileDocument } from './firebase/firebase';
-import Dashboard from './components/layout/Dashboard';
+import DashboardPatient from './components/layout/DashboardPatient';
 import { loadUser, setUser } from './actions/auth';
 import PersonalInfo from './components/info/PersonalInfo';
 import DoctorsInfo from './components/info/DoctorsInfo';
@@ -18,6 +18,7 @@ import PatientsInfo from './components/info/PatientsInfo';
 import Navbar from './shared/Navbar';
 import DoctorSearch from './components/consult/DoctorSearch';
 import DoctorConsult from './components/consult/DoctorConsult';
+import DashboardDoctor from './components/layout/DashboardDoctor';
 const store = configureStore();
 
 const App = () => {
@@ -66,7 +67,8 @@ useEffect(() => {
           <Switch>
             <PublicRouter exact path='/' component={Signup} />
             <PublicRouter path='/login' component={Signin} />
-            <PrivateRouter path='/dashboard' component={Dashboard} />
+            <PrivateRouter path='/dashboard' component={DashboardPatient} />
+            <PrivateRouter path='/doctor/dashboard' component={DashboardDoctor} />
             <PrivateRouter path='/imagetest' component={ImageTest} />
             <PrivateRouter path='/personalinfo' component={PersonalInfo} />
             <PrivateRouter path='/patientsinfo' component={PatientsInfo} />

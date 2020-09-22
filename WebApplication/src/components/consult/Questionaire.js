@@ -7,7 +7,7 @@ const Questionaire = ({ setQuest }) => {
     const [severity,setSeverity] = useState('');
     const [timeOf,setTimeOf] = useState([]);
     const [prevMed,setPrevMed] = useState('');
-    const [whichPart,setWhichPart] = useState('');
+    const [bodyPart,setBodyPart] = useState('');
     const handleInputChange = (event) => {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -29,9 +29,17 @@ const Questionaire = ({ setQuest }) => {
                     <label htmlFor="prevMed">Any previous medications</label>
                     <textarea name="prevMed" value={prevMed} onChange={(e) => setPrevMed(e.target.value)}></textarea>
                 </div>
+                <div>
+                    <label htmlFor="timeOf">Time of day you face problems</label>
+                    <input name="timeOf" value={timeOf} onChange={(e) => setTimeOf(e.target.value)}></input>
+                </div>
+                <div>
+                    <label htmlFor="bodyPart">Which part of body</label>
+                    <input name="bodyPart" value={bodyPart} onChange={(e) => setBodyPart(e.target.value)}></input>
+                </div>
                 <button onClick={(e) => {
                     e.preventDefault();
-                    setQuest({duration,severity,prevMed});
+                    setQuest({duration,severity,prevMed,timeOf,bodyPart});
                 }}>Submit</button>
             </form>
         </div>

@@ -71,3 +71,31 @@ export const bookAppointment = ({selectedDoctor, predict, timeSlot, dateOf,patie
     console.log(re1);
     console.log(re);
 }
+
+export const generateReport = ({ patientUid, predict, doctorSearch, selectedDoctor }) => async dispatch => {
+    const patient = await (await firestore.doc(`Patients/${patientUid}`).get()).data();
+    const { questions } = doctorSearch;
+    const data = {
+        patientId: patientUid,
+        doctorId: selectedDoctor.uid,
+        diseaseName: predict.diseaseName,
+        description: predict.description,
+        patientName: patient.name,
+        patientNumber: patient.phoneNumber,
+        patientEmail: patient.email,
+        allergies: patient.allergies,
+        bloodGroup: patient.bloodGroup,
+        duration: questions.duration,
+        severity: questions.severity,
+        timeOfDay: questions.timeOf,
+        prevMed: questions.prevMed,
+        bodyPart: questions.bodyPart,
+        diseaseUrl: predict.fireBaseUrl
+    };
+    const res = await firestore.doc(`Doctors/${selectedDoctor.uid}`).collection('Reports').add(data);
+    dispatch({
+        type: 'SET_REPORT',
+        payload: data
+    });
+    console.log(res);
+}
