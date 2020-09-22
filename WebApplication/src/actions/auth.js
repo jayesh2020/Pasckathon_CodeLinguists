@@ -1,42 +1,44 @@
-import { auth,provider,firestore } from '../firebase/firebase';
+import { auth, provider, firestore } from '../firebase/firebase';
 
 // Check if user exists if not create a user
-export const createUserProfileDocument = async (userAuth) => async dispatch => {
-    if(!userAuth) return;
-  
-   const userReference =  firestore.doc(`users/${userAuth.uid}`);
-   const snapShot =  await userReference.get();
-   console.log(snapShot);
-   if(!snapShot.exists) {
-     const {displayName, email} = userAuth;
-     const createdAt = new Date();
-     try {
-       await userReference.set({
-         displayName,
-         email,
-         createdAt
-       })
-     } catch (error) {
-        console.log(error)
-     }
-   }
-   return userReference;
-  }
+export const createUserProfileDocument = async (userAuth) => async (
+  dispatch
+) => {
+  if (!userAuth) return;
 
-export const signInWithGoogle = () => {
-    auth.signInWithPopup(provider);
+  const userReference = firestore.doc(`users/${userAuth.uid}`);
+  const snapShot = await userReference.get();
+  console.log(snapShot);
+  if (!snapShot.exists) {
+    const { name, email } = userAuth;
+    const createdAt = new Date();
+    try {
+      await userReference.set({
+        name,
+        email,
+        createdAt,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  return userReference;
 };
 
-export const loadUser = uid => async dispatch => {
-    dispatch({
-        type: 'LOAD_USER',
-        payload: uid
-    })
-}
+export const signInWithGoogle = () => {
+  auth.signInWithPopup(provider);
+};
 
-export const setUser = user => async dispatch => {
+export const loadUser = (uid) => async (dispatch) => {
+  dispatch({
+    type: 'LOAD_USER',
+    payload: uid,
+  });
+};
+
+export const setUser = (user) => async (dispatch) => {
   dispatch({
     type: 'SET_USER',
-    payload: user
+    payload: user,
   });
-}
+};
