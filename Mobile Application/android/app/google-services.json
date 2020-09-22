@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "437102869698",
+    "firebase_url": "https://pascathon.firebaseio.com",
+    "project_id": "pascathon",
+    "storage_bucket": "pascathon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:437102869698:android:0a68c9cdbcda62477f0f5b",
+        "android_client_info": {
+          "package_name": "com.example.pascathon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "437102869698-oicbeddudkipmksn89o9rooqka5ktvpc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pascathon",
+            "certificate_hash": "fe758c32fff89371c7a4aa8cb35381a456b74534"
+          }
+        },
+        {
+          "client_id": "437102869698-cn52qensvffr23t9q0e32q20u98q5phi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYfBOx50qcedjvlDaO3N7k4F-V664z-3Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "437102869698-cn52qensvffr23t9q0e32q20u98q5phi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
