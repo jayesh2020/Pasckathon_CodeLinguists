@@ -2,7 +2,8 @@ const initialState = {
     doctors:null,
     selectedDoctor: null,
     error: '',
-    questions:null
+    questions:null,
+    report: null
 };
 
 export default (state = initialState, action) => {
@@ -21,6 +22,11 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 questions: action.payload
+            };
+        case 'SET_REPORT':
+            return {
+                ...state,
+                report: action.payload
             };
         default:
             return state;
