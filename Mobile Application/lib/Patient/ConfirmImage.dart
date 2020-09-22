@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -12,6 +13,7 @@ import 'dart:io';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 class ConfirmImage extends StatefulWidget {
   File _file;
@@ -27,6 +29,7 @@ class _ConfirmImageState extends State<ConfirmImage> {
   String diseaseName;
    RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
   final picker = ImagePicker();
+  var uuid = Uuid();
   Map<String,String>diseaseInfo;
 
 
@@ -35,7 +38,16 @@ class _ConfirmImageState extends State<ConfirmImage> {
   addDetails(String dis)async{
     CollectionReference collectionReference;
     String uid=FirebaseAuth.instance.currentUser.uid;
-    Map<String,String>mapp={'disease_name':"$dis","date":"${DateFormat("dd-MM-yyyy HH:mm:ss").format(DateTime.now())}"};
+    String downloadUrl;
+    StorageTaskSnapshot snapshot = await FirebaseStorage.instance
+        .ref()
+        .child('images')
+        .child(uuid.v4())
+        .putFile(widget._file)
+        .onComplete;
+    if (snapshot.error == null) {
+      downloadUrl = await snapshot.ref.getDownloadURL();}
+    Map<String,String>mapp={'disease_name':"$dis","date":"${DateFormat("dd-MM-yyyy HH:mm:ss").format(DateTime.now())}","fireBaseUrl":"$downloadUrl","description":""};
    await FirebaseFirestore.instance.collection('Patients').doc(uid).collection('Tests').add(mapp).then((value) =>
    print(value.id));
 

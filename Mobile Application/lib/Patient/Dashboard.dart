@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:pascathon/Patient/ConfirmImage.dart';
 import 'package:pascathon/Patient/UserProfile.dart';
+import 'package:pascathon/loader.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -19,13 +23,34 @@ class _DashboardState extends State<Dashboard> {
     int selectedIndex=0;
     FirebaseAuth auth=FirebaseAuth.instance;
     File _image;
+    bool load=true;
+    var userInfo;
     final picker = ImagePicker();
+    List<QueryDocumentSnapshot>sna;
+    List<QueryDocumentSnapshot>sna1;
+    final Shader linearGradient = LinearGradient(
+      colors: <Color>[  Color(0xFFea9b72),
+        Color(0xFFff9e33)],
+    ).createShader(Rect.fromLTWH(0.0, 0.0, 100.0, 70.0));
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _user=auth.currentUser;
+    getData();
+  }
+
+  getData()async{
+    userInfo=await FirebaseFirestore.instance.collection('Patients').doc(FirebaseAuth.instance.currentUser.uid).get();
+    var snapshot=await FirebaseFirestore.instance.collection('Patients').doc(FirebaseAuth.instance.currentUser.uid).collection('Tests').get();
+    var snapshot1=await FirebaseFirestore.instance.collection('Patients').doc(FirebaseAuth.instance.currentUser.uid).collection('Appointments').get();
+//    var snapshot=await FirebaseFirestore.instance.collection('Patients').get();
+    setState(() {
+      sna=snapshot.docs;
+      sna1=snapshot1.docs;
+      load=false;
+    });
   }
 
 
@@ -159,32 +184,136 @@ class _DashboardState extends State<Dashboard> {
 
 
 
-    return SafeArea(
+    return load==true?Container(child: loader1,color: Colors.white,):SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: selectedIndex==0?Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        body: selectedIndex==0?Stack(
           children: [
-//            SizedBox(height: 30,),
-//            Padding(
-//              padding: const EdgeInsets.symmetric(horizontal: 15),
-//              child: Column(
-//                crossAxisAlignment: CrossAxisAlignment.start,
-//                children: [
-//                  Text('Hello',style: GoogleFonts.aBeeZee(color: Colors.grey.shade600,fontSize: 18),),
-//                  Text(_user.displayName.split(' ')[0],style: GoogleFonts.aBeeZee( fontSize: 22 ,color: Colors.black,fontStyle: FontStyle.normal,),)
-//                ],
-//              ),
-//            ),
-          Image.asset('assets/images/dashboardimage.jpg'),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: 20,),
-                Text('No medical history yet',style: GoogleFonts.aBeeZee(color: Colors.grey.shade600,fontSize: 18),),
-                Text('Click on the camera icon to start',style: GoogleFonts.aBeeZee( fontSize: 18 ,color: Colors.black,fontStyle: FontStyle.normal,),)
-              ],
+            Container(
+              height: 220,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFea9b72),
+                        Color(0xFFff9e33)
+                      ]
+                  )
+              ),
             ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                  padding: EdgeInsets.only(top: 30),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                image: _user.photoURL==null?AssetImage('assets/images/placeholder.jpg'):NetworkImage(_user.photoURL)
+                            )
+//                  image: widget._user.photoURL==null?AssetImage('assets/images/placeholder.jpg'):NetworkImage(widget._user.photoURL)
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+                      Text(userInfo.data()['name'],style: TextStyle( fontSize: 16,color: Colors.white,fontStyle: FontStyle.normal,fontFamily: 'MontserratReg'),)
+                    ],
+                  )
+              ),
+            ),
+            Positioned(
+              top: 180,
+              left: 20,
+              right: 20,
+              child: Material(
+                elevation: 5,
+                child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 80,
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              children: [
+                                Text('TESTS',style: GoogleFonts.aBeeZee( fontSize: 18,fontStyle: FontStyle.normal,fontWeight: FontWeight.bold,foreground: Paint()..shader = linearGradient),),
+                                SizedBox(height: 5,),
+                                Text('${sna.length}',style: GoogleFonts.aBeeZee( fontSize: 18,fontStyle: FontStyle.normal,fontWeight: FontWeight.bold,foreground: Paint()..shader = linearGradient),),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Text('APPOINTMENTS',style: GoogleFonts.aBeeZee( fontSize: 18,fontStyle: FontStyle.normal,fontWeight: FontWeight.bold,foreground: Paint()..shader = linearGradient),),
+                                SizedBox(height: 5,),
+                                Text('${sna1.length}',style: GoogleFonts.aBeeZee( fontSize: 18,fontStyle: FontStyle.normal,fontWeight: FontWeight.bold,foreground: Paint()..shader = linearGradient),),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                ),
+              ),
+            ),
+            sna.length==0? Positioned(
+              top: 280,
+              child: Column(
+                children: [
+                  Image.asset('assets/images/dashboardimage.jpg',width: MediaQuery.of(context).size.width,),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 20,),
+                      Text('No medical history yet',style: GoogleFonts.aBeeZee(color: Colors.grey.shade600,fontSize: 18),),
+                      Text('Click on the camera icon to start',style: GoogleFonts.aBeeZee( fontSize: 18 ,color: Colors.black,fontStyle: FontStyle.normal,),)
+                    ],
+                  ),
+                ],
+              ),
+            ):Positioned(
+              top: 270,
+              child: Column(
+                children: [
+                  Align(child: Text('Tests',style: GoogleFonts.aBeeZee(color: Colors.black,fontSize: 18),textAlign: TextAlign.start,)),
+                  SizedBox(height: 10,),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GridView.builder(
+
+                        physics: AlwaysScrollableScrollPhysics(),
+                        itemBuilder: (BuildContext context,int pos){
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ClipOval(child: sna[pos].data()['fireBaseUrl']==null?Image.asset('assets/images/placeholder.jpg',height: 100,width: 100,):FadeInImage.assetNetwork(placeholder:'assets/images/placeholder.jpg', image: sna[pos].data()['fireBaseUrl'],height: 100,width: 100,imageCacheHeight: 100,imageCacheWidth: 100,)),
+                              SizedBox(height: 10,),
+                              Center(child: Text(sna[pos].data()['disease_name'],style: TextStyle(color: Colors.black,fontStyle: FontStyle.normal,fontFamily: 'MontserratMed'),textAlign: TextAlign.center,)),
+                              SizedBox(height: 5,),
+                              Text(DateFormat.yMMMd().format(DateFormat('dd-MM-yyyy HH:mm:ss').parse(sna[pos].data()['date'])),style: TextStyle(color: Colors.black,fontStyle: FontStyle.normal,fontFamily: 'MontserratMed')),
+                            ],
+                          ),
+                        );
+                      },
+                        itemCount: sna.length,shrinkWrap: true,
+                        gridDelegate:
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2),),
+                    ),
+                  )
+                ],
+              ),
+            )
           ],
         ):UserProfile(_user),
         bottomNavigationBar: CurvedNavigationBar(
@@ -196,7 +325,6 @@ class _DashboardState extends State<Dashboard> {
             Icon(Icons.home,color: Colors.white,),
             Icon(Icons.camera_alt,color: Colors.white,),
             Icon(Icons.event_note,color: Colors.white,),
-            Icon(Icons.person,color: Colors.white,),
           ],
           onTap: (int x)async{
             print(x);
@@ -207,10 +335,6 @@ class _DashboardState extends State<Dashboard> {
               break;
               case 1:showSheet();
                     break;
-              case 3:setState(() {
-                selectedIndex=3;
-              });
-              break;
             }
           },
         )
@@ -218,3 +342,4 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 }
+
