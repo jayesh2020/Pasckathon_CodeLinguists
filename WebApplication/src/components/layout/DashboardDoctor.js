@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getAppointments } from '../../actions/docDashFun';
 
-const DashboardDoctor = ({ auth, docDashFun, getAppointments }) => {
+const DashboardDoctor = ({ auth, docDashFunc, getAppointments }) => {
   useEffect(() => {
     getAppointments(auth.uid);
   }, []);
-  const { appointments } = docDashFun;
+  const { appointments } = docDashFunc;
   return (
     <div>
       Dashboard
@@ -15,7 +15,7 @@ const DashboardDoctor = ({ auth, docDashFun, getAppointments }) => {
           <h3>Appointments</h3>
           {appointments.map((appoint) => (
             <div>
-              <img src={appoint.fireBaseUrl} height='30%' width='30%' />
+              <img src={appoint.patientProfilePic} height='30%' width='30%' />
               <p> Name: {appoint.patientName}</p>
               <p>Appointment Time: {appoint.appointmentTime}</p>
               <p>Appointment Date: {appoint.diseasePrediction}</p>
@@ -29,7 +29,7 @@ const DashboardDoctor = ({ auth, docDashFun, getAppointments }) => {
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  docDashFun: state.docDashFun,
+  docDashFunc: state.docDashFunc,
 });
 
 const mapDispatchToProps = (dispatch) => ({
