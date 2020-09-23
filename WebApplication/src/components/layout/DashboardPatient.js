@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getAppointments, getTests } from '../../actions/dashboardFunc';
 import { connect } from 'react-redux';
+import Report from '../consult/Report';
 
 const DashboardPatient = ({ auth, dashFunc, getTests, getAppointments }) => {
   useEffect(() => {
@@ -11,6 +12,7 @@ const DashboardPatient = ({ auth, dashFunc, getTests, getAppointments }) => {
   const { appointments, tests } = dashFunc;
   return (
     <div>
+      <Report />
       Dashboard
       <Link to='/imagetest'>Test</Link>
       <Link to='/doctorsearch'>Search Doctor</Link>

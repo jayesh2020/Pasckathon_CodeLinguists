@@ -3,7 +3,7 @@ import Questionaire from './Questionaire';
 import { connect } from 'react-redux';
 import { getDoctors, getDoctor,bookAppointment, generateReport } from '../../actions/doctorSearch';
 
-const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, bookAppointment}) => {
+const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, bookAppointment, generateReport}) => {
     const [toggler,setToggler] = useState(false);
     const [selectDate,setSelectDate] = useState('');
     const [timeSlot,setTimeSlot] = useState('');
@@ -182,7 +182,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     getDoctor: (uid) => dispatch(getDoctor(uid)),
-    bookAppointment: (data) => dispatch(bookAppointment(data))
+    bookAppointment: (data) => dispatch(bookAppointment(data)),
+    generateReport: (data) => dispatch(generateReport(data))
 });
 
 export default connect(mapStateToProps,mapDispatchToProps)(DoctorConsult);

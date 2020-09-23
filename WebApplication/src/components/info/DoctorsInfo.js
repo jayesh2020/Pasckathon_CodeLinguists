@@ -10,7 +10,7 @@ const DoctorsInfo = ({ auth,info,setDoctorUser,setDoctorInfo }) => {
   const [endTime, setEndTime] = useState('');
   const [registrationNumber,setReg] = useState('');
   const [clinicSince,setCli] = useState('');
-
+  const [appointments,setAppoint] = useState({});
   const onSubmit = (e) => {
     e.preventDefault();
     const doctor = {
@@ -20,8 +20,9 @@ const DoctorsInfo = ({ auth,info,setDoctorUser,setDoctorInfo }) => {
       startTime,
       endTime,
       //profilePicture,
-      clinicSince,
-      registrationNumber
+      //clinicSince,
+      registrationNumber,
+      appointments
     };
     setDoctorInfo(doctor);
     const data = {
@@ -64,13 +65,7 @@ const DoctorsInfo = ({ auth,info,setDoctorUser,setDoctorInfo }) => {
             onChange={(e) => setReg(e.target.value)}
           />
         </div>
-        <div>
-          <input
-            type='text'
-            value={clinicSince}
-            onChange={(e) => setCli(e.target.value)}
-          />
-        </div>
+        
         <div>
           <input
             type='text'

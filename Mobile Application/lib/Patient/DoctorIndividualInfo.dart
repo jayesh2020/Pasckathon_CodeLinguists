@@ -1,21 +1,34 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:pascathon/Patient/Dashboard.dart';
 import 'package:pascathon/main.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import '../loader.dart';
 
 class DoctorInfo extends StatefulWidget {
   Map<String, dynamic> _data;
   String _uid;
   String _diseaseName;
-  DoctorInfo(this._data, this._uid,this._diseaseName);
+  String startDate;
+  int severity;
+  String prevMedicals;
+  bool day;
+  bool night;
+  String bodyPart;
+  File _file;
+  DoctorInfo(this._data, this._uid,this._diseaseName,this.startDate,this.severity,this.prevMedicals,this.day,this.night,this.bodyPart,this._file);
   @override
   _DoctorInfoState createState() => _DoctorInfoState();
 }
@@ -26,6 +39,7 @@ class _DoctorInfoState extends State<DoctorInfo>
   DateTime endTime;
   int len;
   bool load = true;
+  bool generateReport=true;
   TabController _controller;
   int _currentIndex = 0;
   Color mainColour = Color(0xFFea9b72);
@@ -50,7 +64,6 @@ class _DoctorInfoState extends State<DoctorInfo>
   }
 
   getAppointments() async {
-    Timer(Duration(seconds: 3), () async {
       CollectionReference doctor =
           FirebaseFirestore.instance.collection('Doctors');
       DocumentSnapshot ds = await doctor.doc(widget._uid).get();
@@ -62,22 +75,31 @@ class _DoctorInfoState extends State<DoctorInfo>
             print(mapp1);
 //            mapp1=Map.from(ds.get('appointments'));
 ////            mapp1=Map.from(ds.get('appointments'));
-            appts=mapp1[DateFormat('dd-MM-yyyy').format(DateTime.now())];
-            appts1=mapp1[DateFormat('dd-MM-yyyy').format(DateTime.now().add(Duration(days: 1)))];
+            print(mapp1.containsKey(DateFormat('yyyy-MM-dd').format(DateTime.now())));
+            appts=mapp1[DateFormat('yyyy-MM-dd').format(DateTime.now())];
+            if(appts==null){
+              print('wtf1');
+              appts=List<dynamic>();
+            }
+            print(mapp1.containsKey(DateFormat('yyyy-MM-dd').format(DateTime.now().add(Duration(days: 1)))));
+            appts1=mapp1[DateFormat('yyyy-MM-dd').format(DateTime.now().add(Duration(days: 1)))];
+            if(appts1==null){
+              appts1=List<dynamic>();
+              print('wtf2');
+            }
           });
         }
       }
       setState(() {
         load = false;
       });
-    });
   }
 
   addData(String time, int ind) async {
     try {
       if (ind == 0) {
         appts.add(time);
-        String date=DateFormat('dd-MM-yyyy').format(DateTime.now());
+        String date=DateFormat('yyyy-MM-dd').format(DateTime.now());
         CollectionReference doctor =
         FirebaseFirestore.instance.collection('Doctors');
 //        List<String>abcd=List();
@@ -86,17 +108,25 @@ class _DoctorInfoState extends State<DoctorInfo>
 //        _mapp1={
 //          "abc":abcd
 //        };
-        mapp1[DateFormat('dd-MM-yyyy').format(DateTime.now())]=appts;
+        mapp1[DateFormat('yyyy-MM-dd').format(DateTime.now())]=appts;
         doctor
             .doc(widget._uid)
             .update({"appointments": mapp1} );
       } else {
         appts1.add(time);
+        String date=DateFormat('yyyy-MM-dd').format(DateTime.now().add(Duration(days: 1)));
         CollectionReference doctor =
         FirebaseFirestore.instance.collection('Doctors');
+//        List<String>abcd=List();
+//        abcd.add('def');
+//        abcd.add('efg');
+//        _mapp1={
+//          "abc":abcd
+//        };
+        mapp1[DateFormat('yyyy-MM-dd').format(DateTime.now().add(Duration(days: 1)))]=appts1;
         doctor
             .doc(widget._uid)
-            .update({"appointments1": FieldValue.arrayUnion(appts1)});
+            .update({"appointments": mapp1} );
       }
       String uid = FirebaseAuth.instance.currentUser.uid;
       DocumentSnapshot patientInfo = await FirebaseFirestore.instance
@@ -180,110 +210,457 @@ class _DoctorInfoState extends State<DoctorInfo>
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                  height: 130.0,
-                  child: Center(
-                    child: Scaffold(
-                      body: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 30, left: 8, right: 8),
-                              child: Text(
-                                'Are you sure you want to book appointment for $time?',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'MontserratReg',
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(48, 48, 48, 1)),
-                                textAlign: TextAlign.center,
+          return StatefulBuilder(builder: (BuildContext context, void Function(void Function()) setState) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                    height: 200.0,
+                    child: Center(
+                      child: Scaffold(
+                        body: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 30, left: 8, right: 8),
+                                child: Text(
+                                  'Are you sure you want to book appointment for $time?',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'MontserratReg',
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromRGBO(48, 48, 48, 1)),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Spacer(),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFFF4F4F4),
-                                        borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(5.0)),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: Center(
-                                          child: Text(
-                                            'CANCEL',
-                                            style: TextStyle(
-                                              color: mainColour,
-                                              fontSize: 14,
-                                              fontFamily: 'MontserratReg',
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CheckboxListTile(value: generateReport, onChanged: (bool value) {
+                              setState(() {
+                                generateReport=value;
+                              });
+                            },
+                              title: Text('Generate report',style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontFamily: 'MontserratReg',
+                              ),),
+                            ),
+                            Spacer(),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFF4F4F4),
+                                          borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(5.0)),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Center(
+                                            child: Text(
+                                              'CANCEL',
+                                              style: TextStyle(
+                                                color: mainColour,
+                                                fontSize: 14,
+                                                fontFamily: 'MontserratReg',
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      await addData(time, _currentIndex);
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        if(generateReport){
+                                          await generationReport();
+                                        }
+                                        await addData(time, _currentIndex);
 //                            await storage.deleteAll();
 //                            Navigator.pushAndRemoveUntil(
 //                                context,
 //                                MaterialPageRoute(
 //                                    builder: (BuildContext context) => Home()),
 //                                    (Route<dynamic> route) => false);
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: mainColour,
-                                        borderRadius: BorderRadius.only(
-                                            bottomRight: Radius.circular(5.0)),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: Center(
-                                          child: Text(
-                                            'CONFIRM',
-                                            style: TextStyle(
-                                              color: Color(0xFFF0F0F0),
-                                              fontSize: 14,
-                                              fontFamily: 'MontserratReg',
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: mainColour,
+                                          borderRadius: BorderRadius.only(
+                                              bottomRight: Radius.circular(5.0)),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Center(
+                                            child: Text(
+                                              'CONFIRM',
+                                              style: TextStyle(
+                                                color: Color(0xFFF0F0F0),
+                                                fontSize: 14,
+                                                fontFamily: 'MontserratReg',
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    )),
+              ),
+            );
+          },
+          );
+        });
+  }
+
+
+  generationReport()async{
+    final pdf = pw.Document();
+    final image = PdfImage.file(
+      pdf.document,
+      bytes: widget._file.readAsBytesSync(),
+    );
+    final Med = await rootBundle.load('fonts/Montserrat-Medium.ttf');
+    final Bold = await rootBundle.load('fonts/Montserrat-Bold.ttf');
+    final Reg = await rootBundle.load('fonts/Montserrat-Regular.ttf');
+    final Semi = await rootBundle.load('fonts/Montserrat-SemiBold.ttf');
+    String timeofpain;
+    if(widget.day&&widget.night){
+      timeofpain='Day and Night';
+    }else if(widget.day){
+      timeofpain='Day';
+    }else{
+      timeofpain='Night';
+    }
+    var info=await FirebaseFirestore.instance.collection('Patients').doc(FirebaseAuth.instance.currentUser.uid).get();
+    pdf.addPage(pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Column(
+            children: [
+              pw.Align(
+                alignment: pw.Alignment.center,
+                child:
+                pw.Text('Dermosolutions',style: pw.TextStyle(fontSize: 20,fontWeight: pw.FontWeight.bold,font: pw.Font.ttf(Bold),color: PdfColor.fromHex("ea9b72")))),
+              pw.SizedBox(
+                height: 20
+              ),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Personal Information',style: pw.TextStyle(fontSize: 18,fontWeight: pw.FontWeight.bold,font: pw.Font.ttf(Semi),color: PdfColor.fromHex("ea9b72")))),
+              pw.SizedBox(height: 10),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Name: ${info.data()['name']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000"))),),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Age: ${(DateTime.now().difference(DateFormat('yyyy-MM-dd').parse(info.data()['dateOfBirth'])).inDays/365).floor()}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Gender: ${info.data()['gender']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Address: ${info.data()['city']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+              pw.SizedBox(
+                  height: 20
+              ),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Contact Information',style:  pw.TextStyle(fontSize: 18,fontWeight: pw.FontWeight.bold,font: pw.Font.ttf(Semi),color: PdfColor.fromHex("ea9b72")))),
+              pw.SizedBox(height: 10),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Email: ${info.data()['email']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Phone Number: ${info.data()['phoneNumber']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+              pw.SizedBox(
+                  height: 20
+              ),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Medical Information',style: pw.TextStyle(fontSize: 18,fontWeight: pw.FontWeight.bold,font: pw.Font.ttf(Semi),color: PdfColor.fromHex("ea9b72")))),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Height: ${info.data()['height']} cms',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Weight: ${info.data()['weight']} kgs',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Blood Group: ${info.data()['bloodGroup']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+
+              pw.SizedBox(
+                  height: 20
+              ),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Infection Details',style:  pw.TextStyle(fontSize: 18,fontWeight: pw.FontWeight.bold,font: pw.Font.ttf(Semi),color: PdfColor.fromHex("ea9b72")))),
+              pw.SizedBox(
+                  height: 10
+              ),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Start Date: ${widget.startDate}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Severity(out of 5): ${widget.severity}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+              widget.prevMedicals!=null?pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Previous Medications: ${widget.prevMedicals}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))):pw.Container(),
+              widget.bodyPart!=null?pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Body Part infected: ${widget.bodyPart}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))):pw.Container(),
+              widget.day==false&&widget.night==false?pw.Container():pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Pain during: $timeofpain',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+
+              pw.SizedBox(
+                  height: 20
+              ),
+            ]
+          );  //
+//          pdf.addPage(pw.)// Center
+        }));
+    pdf.addPage(pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      build: (pw.Context context){
+        return pw.Column(
+          children: [
+        pw.Align(
+        alignment: pw.Alignment.centerLeft,
+            child:
+            pw.Text('Model Predictions',style:  pw.TextStyle(fontSize: 18,fontWeight: pw.FontWeight.bold,font: pw.Font.ttf(Semi),color: PdfColor.fromHex("ea9b72")))),
+        pw.SizedBox(height: 10),
+        pw.Align(
+        alignment: pw.Alignment.centerLeft,
+        child:
+        pw.Text('Disease Name: ${widget._diseaseName}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000"))),
+        ),
+        pw.Align(
+        alignment: pw.Alignment.centerLeft,
+        child:
+        pw.Text('Disease Image',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000"))),
+        ),
+        pw.SizedBox(
+        height: 20
+        ),
+        pw.Center(
+        child: pw.Image(image),
+        ),
+          ]
+        );
+      }
+    ));
+    Directory appDocDir = await getTemporaryDirectory();
+    String appDocPath = appDocDir.path;
+    final file = File('$appDocPath/example.pdf');
+    await file.writeAsBytes(pdf.save());
+    print(file.path);
+    StorageTaskSnapshot snapshot = await FirebaseStorage.instance
+        .ref()
+        .child('report')
+        .child(FirebaseAuth.instance.currentUser.uid)
+        .putFile(file)
+        .onComplete;
+    String downloadUrl;
+    if (snapshot.error == null) {
+      downloadUrl = await snapshot.ref.getDownloadURL();}
+      print(downloadUrl);
+
+  }
+
+  showDialog2(BuildContext context){
+    showDialog(context: context,builder: (BuildContext context){
+      String selectedDate;
+
+      dynamic selectedTime;
+      Map<String,List<String>>mapp1=Map<String,List<String>>();
+//      for(DateTime a=DateTime.now();a.isBefore(DateTime.now().add(Duration(days: 7)));a.add(Duration(days: 1))){
+//        if(mapp1.containsKey([DateFormat('yyyy-MM-dd').format(a)])){
+//        }else{
+//
+//        }
+//      }
+      return StatefulBuilder(
+        builder: (BuildContext context,StateSetter setState){
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                  height: 200.0,
+                  child: Center(
+                    child: Scaffold(
+                      body: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            DateTimeField(
+                              onChanged: (dateTime){
+                                setState(() {
+                                  selectedDate=DateFormat('yyyy-MM-dd').format(dateTime);
+                                });
+                              },
+                              style: TextStyle(
+                                fontFamily: 'MontserratMed',
+                                color: Colors.black,
+                              ),
+                              decoration: InputDecoration(
+                                labelText: 'Appointment Date',
+                                labelStyle: TextStyle(
+                                  fontFamily: 'MontserratMed',
+                                  color: Colors.grey.shade500,
                                 ),
-                              ],
+                              ),
+                              format: DateFormat("dd-MM-yyyy"),
+                              onShowPicker: (context, currentValue) {
+                                return showDatePicker(
+                                    context: context,
+                                    firstDate: DateTime.now(),
+                                    initialDate: currentValue ?? DateTime.now(),
+                                    lastDate: DateTime.now().add(Duration(days: 6)));
+                              },
                             ),
-                          )
-                        ],
+                            SizedBox(height: 10,),
+                            DropdownButtonFormField<dynamic>(
+                              style: TextStyle(
+                                fontFamily: 'MontserratMed',
+                                color: Colors.black,
+                              ),
+                              hint: Text('Appointment Time',style: TextStyle(
+                                fontFamily: 'MontserratMed',
+                                color: Colors.black,
+                              ),),
+                              value: selectedTime,
+                              onChanged: (val){
+                                setState(() {
+                                  selectedTime=val;
+                                });
+                              },
+                              items:selectedDate==null?null:mapp1[selectedDate].map((e) => DropdownMenuItem<dynamic>(value: mapp1[selectedDate],
+                              child: Text('${mapp1[selectedDate]}'),
+                             )),
+                            ),
+                            Spacer(),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFF4F4F4),
+                                          borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(5.0)),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Center(
+                                            child: Text(
+                                              'CANCEL',
+                                              style: TextStyle(
+                                                color: mainColour,
+                                                fontSize: 14,
+                                                fontFamily: 'MontserratReg',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () async {
+//                                      await addData(time, _currentIndex);
+//                            await storage.deleteAll();
+//                            Navigator.pushAndRemoveUntil(
+//                                context,
+//                                MaterialPageRoute(
+//                                    builder: (BuildContext context) => Home()),
+//                                    (Route<dynamic> route) => false);
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: mainColour,
+                                          borderRadius: BorderRadius.only(
+                                              bottomRight: Radius.circular(5.0)),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Center(
+                                            child: Text(
+                                              'CONFIRM',
+                                              style: TextStyle(
+                                                color: Color(0xFFF0F0F0),
+                                                fontSize: 14,
+                                                fontFamily: 'MontserratReg',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   )),
             ),
           );
-        });
+        },
+      );
+    });
   }
 
   _handleTabSelection() {
@@ -363,12 +740,12 @@ class _DoctorInfoState extends State<DoctorInfo>
                   SizedBox(
                     height: 10,
                   ),
-                  widget._data['clinicSince'] == 'null'
+                  widget._data['experience'] == 'null'
                       ? Container()
                       : Align(
                           alignment: Alignment.center,
                           child: Text(
-                            '${(DateTime.now().difference(DateFormat('dd-MM-yyyy').parse(widget._data['clinicSince'])).inDays / 365).floor()} years experience',
+                            '${widget._data['experience']} years experience',
                             style: TextStyle(
                               color: Colors.black,
                               fontFamily: 'MontserratMed',
@@ -467,14 +844,13 @@ class _DoctorInfoState extends State<DoctorInfo>
                       ),
                     ],
                   ),
-                  _currentIndex == 0
-                      ? appts==null?Container():GridView.builder(
+                  _currentIndex == 0?GridView.builder(
                     shrinkWrap: true,
                         itemBuilder: (BuildContext context, int pos) {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
-                              onTap: appts.contains(DateFormat('HH:mm')
+                              onTap: appts.contains(DateFormat.jm()
                                       .format(startTime.add(
                                           Duration(minutes: pos * 30))))
                                   ? null
@@ -482,7 +858,7 @@ class _DoctorInfoState extends State<DoctorInfo>
                                       print(appts);
 
                                       print(appts.contains(
-                                          DateFormat('HH:mm').format(
+                                          DateFormat.jm().format(
                                               startTime.add(Duration(
                                                   minutes: pos * 30)))));
 
@@ -497,15 +873,14 @@ class _DoctorInfoState extends State<DoctorInfo>
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
 
-                                  color: appts.contains(DateFormat('HH:mm')
+                                  color: appts.contains(DateFormat.jm()
                                           .format(startTime.add(
                                               Duration(minutes: pos * 30))))
                                       ? Colors.grey.shade500
                                       : null,
 
-                                  gradient: appts.contains(DateFormat(
-                                              'HH:mm')
-                                          .format(startTime.add(
+                                  gradient: appts.contains(DateFormat.jm().
+                                          format(startTime.add(
                                               Duration(minutes: pos * 30))))
                                       ? null
                                       : LinearGradient(
@@ -547,38 +922,37 @@ class _DoctorInfoState extends State<DoctorInfo>
 
 //    shrinkWrap: true,
                       )
-                      : appts1==null?Container():GridView.builder(
+                      :GridView.builder(
                     shrinkWrap: true,
                         itemBuilder: (BuildContext context, int pos) {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
-                              onTap: appts1.contains(DateFormat('HH:mm')
+                              onTap: appts1.contains(DateFormat.jm()
                                       .format(startTime.add(
                                           Duration(minutes: pos * 30))))
                                   ? null
                                   : () {
                                       print(appts1);
                                       print(appts1.contains(
-                                          DateFormat('HH:mm').format(
+                                          DateFormat.jm().format(
                                               startTime.add(Duration(
                                                   minutes: pos * 30)))));
                                       showDialog1(
                                           context,
-                                          DateFormat('HH:mm').format(
+                                          DateFormat.jm().format(
                                               startTime.add(Duration(
                                                   minutes: pos * 30))));
                                     },
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
-                                  color: appts1.contains(DateFormat('HH:mm')
+                                  color: appts1.contains(DateFormat.jm()
                                           .format(startTime.add(
                                               Duration(minutes: pos * 30))))
                                       ? Colors.grey.shade500
                                       : null,
-                                  gradient: appts1.contains(DateFormat(
-                                              'HH:mm')
+                                  gradient: appts1.contains(DateFormat.jm()
                                           .format(startTime.add(
                                               Duration(minutes: pos * 30))))
                                       ? null
@@ -711,6 +1085,11 @@ class _DoctorInfoState extends State<DoctorInfo>
 //            )
                 SizedBox(height: 30,),
                   InkWell(
+                    onTap: ()async{
+//                      await showDialog2(context);
+                    await generationReport();
+                    Fluttertoast.showToast(msg: 'Success');
+                    },
                     child: Material(
                       elevation: 2,
                       child: Container(
