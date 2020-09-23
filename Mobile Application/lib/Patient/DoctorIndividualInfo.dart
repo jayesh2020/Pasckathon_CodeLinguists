@@ -50,7 +50,7 @@ class _DoctorInfoState extends State<DoctorInfo>
   void initState() {
     // TODO: implement initState
     super.initState();
-    print('abcd${widget._uid}');
+    print('abcd${widget._file}');
     _controller = TabController(vsync: this, length: 2);
     _controller.addListener(_handleTabSelection);
     getExactTime();
@@ -95,7 +95,7 @@ class _DoctorInfoState extends State<DoctorInfo>
       });
   }
 
-  addData(String time, int ind) async {
+  addData(String time, int ind,String reportUrl) async {
     try {
       if (ind == 0) {
         appts.add(time);
@@ -140,12 +140,25 @@ class _DoctorInfoState extends State<DoctorInfo>
           .collection('Appointments').add(mapp)
           .then((value) =>
           print(value.id));
-      Map<String, String>mapp2 = {
+      Map<String, String>mapp2;
+      if(ind==0){
+     mapp2 = {
         'patientName': "${patientInfo.data()['name']}",
         'appointmentTime': "$time",
-        "patientProfilePic": "${widget._data['profilePic']}",
-        "diseasePrediction": "${widget._diseaseName}"
-      };
+        "patientProfilePic": "${patientInfo.data()['profilePic']}",
+        "diseasePrediction": "${widget._diseaseName}",
+        "appointmentDate":"${DateFormat("yyyy-MM-dd").format(DateTime.now())}",
+       "reportUrl":"$reportUrl",
+      };}else{
+        mapp2 = {
+          'patientName': "${patientInfo.data()['name']}",
+          'appointmentTime': "$time",
+          "patientProfilePic": "${widget._data['profilePic']}",
+          "diseasePrediction": "${widget._diseaseName}",
+          "appointmentDate":"${DateFormat("yyyy-MM-dd").format(DateTime.now().add(Duration(days: 1)))}",
+          "reportUrl":"$reportUrl",
+        };
+      }
       await FirebaseFirestore.instance.collection('Doctors').doc(widget._uid)
           .collection('Appointments').add(mapp2)
           .then((value) =>
@@ -287,9 +300,8 @@ class _DoctorInfoState extends State<DoctorInfo>
                                     child: GestureDetector(
                                       onTap: () async {
                                         if(generateReport){
-                                          await generationReport();
+                                          await generationReport(time);
                                         }
-                                        await addData(time, _currentIndex);
 //                            await storage.deleteAll();
 //                            Navigator.pushAndRemoveUntil(
 //                                context,
@@ -334,7 +346,7 @@ class _DoctorInfoState extends State<DoctorInfo>
   }
 
 
-  generationReport()async{
+  generationReport(String time)async{
     final pdf = pw.Document();
     final image = PdfImage.file(
       pdf.document,
@@ -370,22 +382,22 @@ class _DoctorInfoState extends State<DoctorInfo>
                   child:
                   pw.Text('Personal Information',style: pw.TextStyle(fontSize: 18,fontWeight: pw.FontWeight.bold,font: pw.Font.ttf(Semi),color: PdfColor.fromHex("ea9b72")))),
               pw.SizedBox(height: 10),
-              pw.Align(
+              info.data()['name']!=null?pw.Align(
                   alignment: pw.Alignment.centerLeft,
                   child:
-                  pw.Text('Name: ${info.data()['name']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000"))),),
-              pw.Align(
+                  pw.Text('Name: ${info.data()['name']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000"))),):pw.Container(),
+              info.data()['dateOfBirth']!="null"? pw.Align(
                   alignment: pw.Alignment.centerLeft,
                   child:
-                  pw.Text('Age: ${(DateTime.now().difference(DateFormat('yyyy-MM-dd').parse(info.data()['dateOfBirth'])).inDays/365).floor()}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
-              pw.Align(
+                  pw.Text('Age: ${(DateTime.now().difference(DateFormat('yyyy-MM-dd').parse(info.data()['dateOfBirth'])).inDays/365).floor()}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))):pw.Container(),
+              info.data()['gender']!=null?pw.Align(
                   alignment: pw.Alignment.centerLeft,
                   child:
-                  pw.Text('Gender: ${info.data()['gender']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
-              pw.Align(
+                  pw.Text('Gender: ${info.data()['gender']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))):pw.Container(),
+              info.data()['city']!=null?pw.Align(
                   alignment: pw.Alignment.centerLeft,
                   child:
-                  pw.Text('Address: ${info.data()['city']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+                  pw.Text('Address: ${info.data()['city']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))):pw.Container(),
               pw.SizedBox(
                   height: 20
               ),
@@ -398,10 +410,10 @@ class _DoctorInfoState extends State<DoctorInfo>
                   alignment: pw.Alignment.centerLeft,
                   child:
                   pw.Text('Email: ${info.data()['email']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
-              pw.Align(
+          info.data()['phoneNumber']!=null?pw.Align(
                   alignment: pw.Alignment.centerLeft,
                   child:
-                  pw.Text('Phone Number: ${info.data()['phoneNumber']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+                  pw.Text('Phone Number: ${info.data()['phoneNumber']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))):pw.Container(),
               pw.SizedBox(
                   height: 20
               ),
@@ -419,10 +431,10 @@ class _DoctorInfoState extends State<DoctorInfo>
                   child:
                   pw.Text('Weight: ${info.data()['weight']} kgs',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
 
-              pw.Align(
+          info.data()['bloodGroup']!=null?pw.Align(
                   alignment: pw.Alignment.centerLeft,
                   child:
-                  pw.Text('Blood Group: ${info.data()['bloodGroup']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+                  pw.Text('Blood Group: ${info.data()['bloodGroup']}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))):pw.Container(),
 
               pw.SizedBox(
                   height: 20
@@ -434,10 +446,10 @@ class _DoctorInfoState extends State<DoctorInfo>
               pw.SizedBox(
                   height: 10
               ),
-              pw.Align(
+              widget.prevMedicals!=null?pw.Align(
                   alignment: pw.Alignment.centerLeft,
                   child:
-                  pw.Text('Start Date: ${widget.startDate}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
+                  pw.Text('Start Date: ${widget.startDate}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))):pw.Container(),
               pw.Align(
                   alignment: pw.Alignment.centerLeft,
                   child:
@@ -454,44 +466,29 @@ class _DoctorInfoState extends State<DoctorInfo>
                   alignment: pw.Alignment.centerLeft,
                   child:
                   pw.Text('Pain during: $timeofpain',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000")))),
-
               pw.SizedBox(
                   height: 20
+              ),
+              pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child:
+                  pw.Text('Model Predictions',style:  pw.TextStyle(fontSize: 18,fontWeight: pw.FontWeight.bold,font: pw.Font.ttf(Semi),color: PdfColor.fromHex("ea9b72")))),
+              pw.SizedBox(height: 10),
+              pw.Align(
+                alignment: pw.Alignment.centerLeft,
+                child:
+                pw.Text('Disease Name: ${widget._diseaseName}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000"))),
               ),
             ]
           );  //
 //          pdf.addPage(pw.)// Center
         }));
     pdf.addPage(pw.Page(
-      pageFormat: PdfPageFormat.a4,
-      build: (pw.Context context){
-        return pw.Column(
-          children: [
-        pw.Align(
-        alignment: pw.Alignment.centerLeft,
-            child:
-            pw.Text('Model Predictions',style:  pw.TextStyle(fontSize: 18,fontWeight: pw.FontWeight.bold,font: pw.Font.ttf(Semi),color: PdfColor.fromHex("ea9b72")))),
-        pw.SizedBox(height: 10),
-        pw.Align(
-        alignment: pw.Alignment.centerLeft,
-        child:
-        pw.Text('Disease Name: ${widget._diseaseName}',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000"))),
-        ),
-        pw.Align(
-        alignment: pw.Alignment.centerLeft,
-        child:
-        pw.Text('Disease Image',style: pw.TextStyle(fontSize: 15,font: pw.Font.ttf(Med),color: PdfColor.fromHex("000000"))),
-        ),
-        pw.SizedBox(
-        height: 20
-        ),
-        pw.Center(
-        child: pw.Image(image),
-        ),
-          ]
-        );
-      }
-    ));
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Image(image),
+          ); // Center
+        }));
     Directory appDocDir = await getTemporaryDirectory();
     String appDocPath = appDocDir.path;
     final file = File('$appDocPath/example.pdf');
@@ -507,6 +504,7 @@ class _DoctorInfoState extends State<DoctorInfo>
     if (snapshot.error == null) {
       downloadUrl = await snapshot.ref.getDownloadURL();}
       print(downloadUrl);
+    await addData(time, _currentIndex,downloadUrl);
 
   }
 
@@ -1087,8 +1085,8 @@ class _DoctorInfoState extends State<DoctorInfo>
                   InkWell(
                     onTap: ()async{
 //                      await showDialog2(context);
-                    await generationReport();
-                    Fluttertoast.showToast(msg: 'Success');
+//                    await generationReport();
+//                    Fluttertoast.showToast(msg: 'Success');
                     },
                     child: Material(
                       elevation: 2,

@@ -29,10 +29,8 @@ class _ConfirmImageState extends State<ConfirmImage> {
   String diseaseName;
    RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
   final picker = ImagePicker();
-  var uuid = Uuid();
   Map<String,String>diseaseInfo;
-
-
+  var uuid = Uuid();
 
 
   addDetails(String dis)async{
@@ -48,11 +46,10 @@ class _ConfirmImageState extends State<ConfirmImage> {
     if (snapshot.error == null) {
       downloadUrl = await snapshot.ref.getDownloadURL();}
     Map<String,String>mapp={'disease_name':"$dis","date":"${DateFormat("dd-MM-yyyy HH:mm:ss").format(DateTime.now())}","fireBaseUrl":"$downloadUrl","description":""};
-   await FirebaseFirestore.instance.collection('Patients').doc(uid).collection('Tests').add(mapp).then((value) =>
-   print(value.id));
+    await FirebaseFirestore.instance.collection('Patients').doc(uid).collection('Tests').add(mapp).then((value) =>
+        print(value.id));
 
   }
-
 
 
 
@@ -136,12 +133,9 @@ class _ConfirmImageState extends State<ConfirmImage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    diseaseInfo={
-      "Carcinoma":"Carcinoma is a malignancy that develops from epithelial cells. Specifically, a carcinoma is a cancer that begins in a tissue that lines the inner or outer surfaces of the body, and that arises from cells originating in the endodermal, mesodermal or ectodermal germ layer during embryogenesis.",
-      "Melanoma":"Melanoma occurs when the pigment-producing cells that give colour to the skin become cancerous.Symptoms might include a new, unusual growth or a change in an existing mole. Melanomas can occur anywhere on the body.Treatment may involve surgery, radiation, medication or in some cases, chemotherapy.",
-      "Vasculitis":"An inflammation of the blood vessels that causes changes in the blood vessel walls.Vasculitis can cause vessel walls to thicken and narrow, cutting off vital blood supply to tissues and organs.Symptoms include fever, fatigue, weight loss and muscle and joint pain.Some forms of vasculitis improve on their own. Others require medication.",
-      "Acne":"A skin condition that occurs when hair follicles plug with oil and dead skin cells.Acne is most common in teenagers and young adults.Symptoms range from uninflamed blackheads to pus-filled pimples or large, red and tender bumps.Treatments include over-the-counter creams and cleanser, as well as prescription antibiotics."
-    };
+    diseaseInfo={"Melnoma":"Melanoma, also known as malignant melanoma, is a type of skin cancer that develops from the pigment-producing cells known as melanocytes.[1] Melanomas typically occur in the skin but may rarely occur in the mouth, intestines or eye (uveal melanoma)\n\nDrugs Approved for Melanoma\nAldesleukin\nBinimetinib\nBraftovi",
+    "Eczema":"Eczema is a term for a group of conditions that make your skin inflamed or irritated. The most common type is atopic dermatitis or atopic eczema. “Atopic” refers to a person’s tendency to get allergic conditions such as asthma and hay fever.\n\nMEDICATION for ECZEMA:\nCorticosteroid creams\nSolutions\nGels\nFoams\nOintments.",
+    "Acne and Rosacea Photos":"Acne is a chronic, inflammatory skin condition that causes spots and pimples, especially on the face, shoulders, back, neck, chest, and upper arms.\n\nMEDICATIONS for Acne and Rosacea:\nRetinoids(avita,retin-A)\nAntibiotics(benzaclin,Duac)\nAzelex\nFinacea"};
   }
   @override
   Widget build(BuildContext context) {
@@ -195,14 +189,17 @@ class _ConfirmImageState extends State<ConfirmImage> {
               ),),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('$diseaseName',style: TextStyle(
+                    child: diseaseName=="Acne and Rosacea Photos"?Text('Acne and Rosacea',style: TextStyle(
                       color: Colors.black,fontFamily: 'MontserratReg',
                       fontSize: 20,fontWeight: FontWeight.bold
+                    )):Text('$diseaseName',style: TextStyle(
+                        color: Colors.black,fontFamily: 'MontserratReg',
+                        fontSize: 20,fontWeight: FontWeight.bold
                     )),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("${diseaseInfo['Carcinoma']}",style: TextStyle(
+                    child: Text("${diseaseInfo[diseaseName]}",style: TextStyle(
                         color: Colors.grey.shade500,fontFamily: 'MontserratReg',
                         fontSize: 16,
                     )),
