@@ -1,7 +1,7 @@
 import React,{useState, useEffect} from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { auth, createUserProfileDocument } from '../firebase/firebase';
+import { auth, createUserProfileDocument, signInWithGoogle } from '../firebase/firebase';
 import "./Signup.scss";
 import { connect } from 'react-redux';
 import { loadUser,setUser } from '../actions/auth';
@@ -41,6 +41,15 @@ const Signup = ({history,loadUser,setUser}) => {
       <Button type="submit" fullWidth variant="contained" color="primary">
         Sign Up
       </Button>
+      <Button
+          type="button"
+          fullWidth
+          variant="contained"
+          onClick={signInWithGoogle}
+          color="secondary"
+        >
+          Sign Up with google
+        </Button>
     </form>
   </div>
 )};

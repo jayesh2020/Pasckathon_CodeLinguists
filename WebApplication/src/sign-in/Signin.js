@@ -49,15 +49,7 @@ const Signin = () => {
         <Button type="submit" fullWidth variant="contained" color="primary">
           Sign In
         </Button>
-        <Button
-          type="button"
-          fullWidth
-          variant="contained"
-          onClick={signInWithGoogle}
-          color="secondary"
-        >
-          Sign In with google
-        </Button>
+        
       </form>
     </div>
   );
