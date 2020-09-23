@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 export const PublicRoute = ({
     isAuthenticated,
+    user,
     component: Component,
     ...rest
 }) => (
@@ -13,13 +14,15 @@ export const PublicRoute = ({
                 <Component {...props} />
             </div>
         ) : (
-            <Redirect to="/dashboard" />
+            (user) && (user.role=="patient" ? <Redirect to='/dashboard' />:<Redirect to='/doctor/dashboard' />)
+            
         )
     )} />
 );
 
 const mapStateToProps = (state) => ({
-    isAuthenticated : state.auth.isAuthenticated
+    isAuthenticated : state.auth.isAuthenticated,
+    user: state.auth.user
 });
 
 export default connect(mapStateToProps)(PublicRoute);

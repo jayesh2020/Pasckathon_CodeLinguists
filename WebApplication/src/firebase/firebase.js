@@ -28,7 +28,15 @@ export const createUserProfileDocument = async (userAuth) => {
   if (!userAuth) return;
 
   const { uid, name, email } = userAuth;
+  var role;
+  const snp = await firestore.doc(`Doctors/${uid}`).get();
+  if(!snp.exists){
+    role='patient'
+  } else {
+    role='doctor'
+  }
   const userReference = {
+    role,
     uid,
     name,
     email,
