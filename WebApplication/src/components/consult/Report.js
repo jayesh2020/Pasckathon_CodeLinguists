@@ -1,5 +1,4 @@
 import React,{ Fragment, useRef } from 'react';
-import ReactPdf from 'react-to-pdf';
 import { connect } from 'react-redux';
 
 const Report = ({ doctorSearch }) => {
@@ -44,9 +43,6 @@ const Report = ({ doctorSearch }) => {
                     <img src={report.diseaseUrl} height="40%" width="40%" />
                 </div>
             </div>}
-            {report && <ReactPdf targetRef={ref} filename={`report.${report.patientId}`}>
-                {({ toPdf }) => <button onClick={toPdf}>Generate Pdf</button>}
-            </ReactPdf>}
         </div>
     )
 }
