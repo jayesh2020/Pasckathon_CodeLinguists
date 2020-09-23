@@ -2,6 +2,18 @@
 
 ## Installation and Setup Instructions
 
+### Link to the ppt
+
+Link to the [ppt](https://docs.google.com/presentation/d/1eMuKMPETxH6HI1ivK1BZPLHYs8FR9XXd7DCLbnrdJX0/edit?usp=sharing).
+
+### Link to the presented video
+
+Link to the [ video](https://drive.google.com/file/d/1clom5NGMVc_BWQQbAVexlv1pY6V_uV5Y/view?usp=sharing).
+
+### Link to the Mobile App APK
+
+Link to the [ Mobile App APK ](https://drive.google.com/file/d/1VJP_9hu9sOSel0y0nPMt_PcxC5CEx8wr/view?usp=sharing).
+
 ### Example
 
 Clone down this repository.
