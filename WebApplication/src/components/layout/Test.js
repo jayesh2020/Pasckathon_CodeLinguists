@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { predictDisease } from '../../actions/predict';
 import { storage } from '../../firebase/firebase';
+import { Button,Col,Image,Row,Card } from 'react-bootstrap';
 
 const ImageTest = ({ history,predictDisease, predict,auth }) => {
   const [state, setState] = useState(null);
@@ -43,7 +44,7 @@ const ImageTest = ({ history,predictDisease, predict,auth }) => {
     console.log(fireURL);
     console.log(imageAsUrl);
     //predictDisease({fire: fireURL.imgUrl,uid:auth.uid,fd:state.selectedFile});
-    setState(null);
+    //setState(null);
     setToggler(true);
   };
 
@@ -54,17 +55,44 @@ const ImageTest = ({ history,predictDisease, predict,auth }) => {
     <div>
       {!toggler && (
         <div>
+          <Row>
+          <Col lg={4}></Col>
+          <Col lg={4}>
           <input type='file' onChange={handleChange} />
-          {state && <img src={state.file} height='30%' width='30%' />}
-          {!!state && <button onClick={discardChange}>Discard</button>}
-          {state && <button onClick={imageUpload}>Upload</button>}
+          </Col>
+          </Row>
+          <br></br>
+          <Row>
+          <Col lg={4}></Col>
+          <Col lg={4}>
+          {state && 
+            <Image src={state.file} center="true" rounded />
+          }          
+          </Col>
+          </Row>
+          
+          <div className="mb-2">
+            {!!state && <Button onClick={discardChange} variant="black text-white" size="lg">
+              Discard
+            </Button>}
+            {state && <Button onClick={imageUpload} variant="orange" size="lg">
+              Upload
+            </Button>}
+          </div>
         </div>
       )}
       {toggler && (
-        <div>
-          <p>{predict.diseaseName}</p>
-          <p>{predict.description}</p>
-          <button onClick={handleClick}>Consult a doctor</button>
+        <div style={{marginLeft:"auto", marginRight:"auto"}}>
+        <Card style={{marginLeft:"auto", marginRight:"auto", marginTop:"2rem", width: '30rem' }}>
+          <Card.Img variant="top" src={state.file} />
+          <Card.Body>
+            <Card.Title>{predict.diseaseName}</Card.Title>
+            <Card.Text>
+              {predict.diseaseName && <p>Eczema is a term for a group of conditions that make your skin inflamed or irritated. The most common type is atopic dermatitis or atopic eczema. “Atopic” refers to a person’s tendency to get allergic conditions such as asthma and hay fever.</p>}
+            </Card.Text>
+            {predict.diseaseName && <Button variant="orange text-white text-bold" onClick={handleClick}>Consult a doctor</Button>}
+          </Card.Body>
+        </Card>
         </div>
       )}
     </div>

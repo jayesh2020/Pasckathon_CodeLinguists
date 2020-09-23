@@ -2,6 +2,7 @@ import React,{ useState, useEffect } from 'react';
 import Questionaire from './Questionaire';
 import { connect } from 'react-redux';
 import { getDoctors, getDoctor,bookAppointment, generateReport } from '../../actions/doctorSearch';
+import { Button, Card } from 'react-bootstrap';
 
 const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, bookAppointment, generateReport}) => {
     const [toggler,setToggler] = useState(false);
@@ -157,19 +158,27 @@ const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, boo
         <div>
             {!toggler && <Questionaire />}
             {toggler && selectedDoctor && <div>
-                <img src={selectedDoctor.profilePic} />
-                <p>{selectedDoctor.name}</p>
-                <input type="date" value={selectDate} onChange={(e) => setSelectDate(e.target.value)} max={delayDate} min={curDate} />
-                {selectDate && <p>Slots:</p>}
-                {selectDate && slots.map(slot => 
-                    <button
-                    disabled={lis.includes(slot.timeSlotStart)}
-                    onClick={(e) => {
-                    e.preventDefault();
-                    book(slot.timeSlotStart);
-                }}>{slot.timeSlotStart}</button>)}
+                <Card style={{ marginLeft: "auto", marginTop:"20px",marginRight:"auto",width: '30rem',borderRadius:"5px" }}>
+                <Card.Img variant="top" src={selectedDoctor.profilePic} thumbnail style={{maxHeight:"300px",paddingRight:"10px", paddingLeft:"10px", marginTop:"20px", height:"300px", width:"100%", display:"block"}} />
+                <Card.Body>
+                  <Card.Title>{selectedDoctor.name}</Card.Title>
+                  <Card.Text>
+                  <input type="date" value={selectDate} onChange={(e) => setSelectDate(e.target.value)} max={delayDate} min={curDate} />
+                  {selectDate && <p>Slots:</p>}
+                  {selectDate && slots.map(slot => 
+                      <Button
+                      disabled={lis.includes(slot.timeSlotStart)}
+                      onClick={(e) => {
+                      e.preventDefault();
+                      book(slot.timeSlotStart);
+                  }}>{slot.timeSlotStart}</Button>)}
+                  </Card.Text>
+                  {toggler && <Button variant="orange text-white bold" onClick={submitRes}>Submit</Button>}
+                </Card.Body>
+              </Card>
+                
             </div>}
-            <button onClick={submitRes}>Submit</button>
+
         </div>
     )
 }
