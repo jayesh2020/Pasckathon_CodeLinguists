@@ -5,6 +5,8 @@ import configureStore from './store/configureStore';
 import { Provider } from 'react-redux';
 import Signin from './sign-in/SigninPatient';
 import Spinner from './components/layout/Spinner';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import Signup from './sign-up/Signup';
 import Userinfo from './user-info/Userinfo';
 import PrivateRouter from './routers/PrivateRoute';
@@ -20,8 +22,9 @@ import Navbar from './shared/Navbar';
 import DoctorSearch from './components/consult/DoctorSearch';
 import DoctorConsult from './components/consult/DoctorConsult';
 import DashboardDoctor from './components/layout/DashboardDoctor';
+import { createBrowserHistory } from 'history/createBrowserHistory';
 const store = configureStore();
-
+//const history = createBrowserHistory();
 const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setAuth] = useState(false);

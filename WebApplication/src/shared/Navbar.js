@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment, useState } from 'react';
 import './navbar.scss';
 import {
   MDBNavbar,
@@ -16,17 +16,18 @@ import {
 } from 'mdbreact';
 import { auth } from '../firebase/firebase';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 
-class NavbarPage extends Component {
-  state = {
-    isOpen: false,
+const NavbarPage = ({history,auth}) => {
+  
+  const [state,setState] = useState({
+    isOpen: false
+  });
+  const toggleCollapse = () => {
+    setState({ isOpen: !this.state.isOpen });
   };
 
-  toggleCollapse = () => {
-    this.setState({ isOpen: !this.state.isOpen });
-  };
-
-  render() {
     return (
       <Router>
         <MDBNavbar color='orange' dark expand='md'>
@@ -35,18 +36,19 @@ class NavbarPage extends Component {
               DERMO SOLUTIONS
             </strong>
           </MDBNavbarBrand>
-          <MDBNavbarToggler onClick={this.toggleCollapse} />
-          <MDBCollapse id='navbarCollapse3' isOpen={this.state.isOpen} navbar>
+          <MDBNavbarToggler onClick={toggleCollapse} />
+          <MDBCollapse id='navbarCollapse3' isOpen={state.isOpen} navbar>
             <MDBNavbarNav left>
               <MDBNavItem active>
-                <MDBNavLink to='#!'>Dashboard</MDBNavLink>
+                {auth.user && (auth.user.role=='doctor'?<MDBNavLink onClick={(e) => {e.preventDefault();history.push('/doctor/dashboard')}} to='/doctor/dashboard'>Dashboard</MDBNavLink>:<MDBNavLink onClick={(e) => {e.preventDefault();history.push('/dashboard')}} to='/dashboard'>Dashboard</MDBNavLink>)}
+              </MDBNavItem>
+              {auth.user && (auth.user.role=='patient' && <Fragment><MDBNavItem>
+                <MDBNavLink onClick={e => {e.preventDefault(); history.push('/imagetest')}} to='/imagetest'>Test</MDBNavLink>
               </MDBNavItem>
               <MDBNavItem>
-                <MDBNavLink to='#!'>Doctors</MDBNavLink>
+                <MDBNavLink to='/doctorsearch'>Doctor Search</MDBNavLink>
               </MDBNavItem>
-              <MDBNavItem>
-                <MDBNavLink to='#!'>Pricing</MDBNavLink>
-              </MDBNavItem>
+              </Fragment>)}
             </MDBNavbarNav>
             <MDBNavbarNav right>
               <MDBNavItem>
@@ -78,6 +80,10 @@ class NavbarPage extends Component {
       </Router>
     );
   }
-}
 
-export default NavbarPage;
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps)(NavbarPage);

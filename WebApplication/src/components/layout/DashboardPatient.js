@@ -12,11 +12,10 @@ const DashboardPatient = ({ auth, dashFunc, getTests, getAppointments }) => {
   const { appointments, tests } = dashFunc;
   return (
     <div>
-      <Report />
+      
       Dashboard
       <Link to='/imagetest'>Test</Link>
       <Link to='/doctorsearch'>Search Doctor</Link>
-      <Link to='/doctor/dashboard'>Doctor Dashboard</Link>
       {appointments && (
         <div>
           <h3>Appointments</h3>
