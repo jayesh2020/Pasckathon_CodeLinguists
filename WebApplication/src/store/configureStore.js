@@ -2,6 +2,7 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import authReducer from '../reducers/authReducer';
 import dashFuncReducer from '../reducers/dashFuncReducer';
+import docDashFuncReducer from '../reducers/docDashFuncReducer';
 import doctorSearchReducer from '../reducers/doctorSearchReducer';
 import infoReducer from '../reducers/infoReducer';
 import predictReducer from '../reducers/predictReducer';
@@ -15,7 +16,8 @@ export default () => {
       info: infoReducer,
       predict: predictReducer,
       doctorSearch: doctorSearchReducer,
-      dashFunc: dashFuncReducer
+      dashFunc: dashFuncReducer,
+      docDashFunc: docDashFuncReducer,
     }),
     composeEnhancers(applyMiddleware(thunk))
   );

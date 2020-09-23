@@ -14,6 +14,7 @@ import {
   MDBDropdownItem,
   MDBIcon,
 } from 'mdbreact';
+import { auth } from '../firebase/firebase';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 class NavbarPage extends Component {
@@ -60,7 +61,14 @@ class NavbarPage extends Component {
                   </MDBDropdownToggle>
                   <MDBDropdownMenu right className='dropdown-default '>
                     <MDBDropdownItem href='#!'>Reset Password</MDBDropdownItem>
-                    <MDBDropdownItem href='#!'>Sign Out</MDBDropdownItem>
+                    <MDBDropdownItem
+                      onClick={(e) => {
+                        e.preventDefault();
+                        auth.signOut();
+                      }}
+                    >
+                      Sign Out
+                    </MDBDropdownItem>
                   </MDBDropdownMenu>
                 </MDBDropdown>
               </MDBNavItem>
