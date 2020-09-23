@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -154,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
       DocumentSnapshot dS = await collectionReference.doc(user.uid).get();
 
       collectionReference1 = FirebaseFirestore.instance.collection('Patients');
-      DocumentSnapshot dS1 = await collectionReference.doc(user.uid).get();
+      DocumentSnapshot dS1 = await collectionReference1.doc(user.uid).get();
       if(dS.exists)Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>DoctorDashboard()));
       else if(dS1.exists){
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>Dashboard()));
@@ -222,113 +223,117 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Colors.white,
                     borderRadius: BorderRadius.only(topRight: Radius.circular(35),topLeft: Radius.circular(35)),
                   ),
-                  child: Column(
+                  child: Expanded(
+                    child: ListView(
 //          crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(height: 20,),
-                      Text('Login',
-                        style: TextStyle(
-                          fontFamily: 'MontserratSemi',
-                            color: Colors.black,
-                            fontSize: 20,
-                        ),
-                      ),
-                      SizedBox(height: 20,),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Color(0xFFff9e33),width: 2),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 15,top: 15,bottom: 15),
-                            child: TextFormField(
-                              onChanged: (val){
-                                setState(() {
-                                  _email=val;
-                                });
-                              },
-                                style: TextStyle( fontSize: 16,color: Colors.black,fontStyle: FontStyle.normal,fontFamily: 'MontserratMed'),
-                                decoration: InputDecoration.collapsed(hintText: 'Email',hintStyle:  TextStyle( fontSize: 16,color: Colors.grey,fontStyle: FontStyle.normal,fontFamily: 'MontserratMed'),)
+                      children: <Widget>[
+                        SizedBox(height: 20,),
+                        Center(
+                          child: Text('Login',
+                            style: TextStyle(
+                              fontFamily: 'MontserratSemi',
+                                color: Colors.black,
+                                fontSize: 20,
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 20,),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Color(0xFFff9e33),width: 2),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 15,top: 15,bottom: 15),
-                            child: TextFormField(
-                              onChanged: (val){
-                                setState(() {
-                                  _password=val;
-                                });
-                              },
-                              obscureText: true,
-                                style: TextStyle( fontSize: 16,color: Colors.black,fontStyle: FontStyle.normal,fontFamily: 'MontserratMed'),
-                                decoration: InputDecoration.collapsed(hintText: 'Password',hintStyle:  TextStyle( fontSize: 16,color: Colors.grey,fontStyle: FontStyle.normal,fontFamily: 'MontserratMed'),)
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 30,),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: InkWell(
-                          onTap: ()async{
-                            await login();
-                          },
+                        SizedBox(height: 20,),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12),  gradient: LinearGradient(
-                                colors: [
-                                  Color(0xFFea9b72),
-                                  Color(0xFFff9e33)
-                                ]
-                            )),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Color(0xFFff9e33),width: 2),
+                            ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                              child: Center(child: Text('Log In',style: TextStyle( fontSize: 20,color: Colors.white,fontStyle: FontStyle.normal,fontFamily: 'MontserratSemi'),)),
+                              padding: const EdgeInsets.only(left: 15,top: 15,bottom: 15),
+                              child: TextFormField(
+                                onChanged: (val){
+                                  setState(() {
+                                    _email=val;
+                                  });
+                                },
+                                  style: TextStyle( fontSize: 16,color: Colors.black,fontStyle: FontStyle.normal,fontFamily: 'MontserratMed'),
+                                  decoration: InputDecoration.collapsed(hintText: 'Email',hintStyle:  TextStyle( fontSize: 16,color: Colors.grey,fontStyle: FontStyle.normal,fontFamily: 'MontserratMed'),)
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 20,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SignInButtonBuilder(
-                            elevation: 2,
-                            textColor: Colors.black,
-                            mini: true,
-                            shape: CircleBorder(),
-                            icon: FontAwesomeIcons.google,
-                            onPressed: ()async{
-                              await handleGoogleSignIn(context);
-                            }, backgroundColor: Colors.red.shade900, text: 'a',
+                        SizedBox(height: 20,),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Color(0xFFff9e33),width: 2),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15,top: 15,bottom: 15),
+                              child: TextFormField(
+                                onChanged: (val){
+                                  setState(() {
+                                    _password=val;
+                                  });
+                                },
+                                obscureText: true,
+                                  style: TextStyle( fontSize: 16,color: Colors.black,fontStyle: FontStyle.normal,fontFamily: 'MontserratMed'),
+                                  decoration: InputDecoration.collapsed(hintText: 'Password',hintStyle:  TextStyle( fontSize: 16,color: Colors.grey,fontStyle: FontStyle.normal,fontFamily: 'MontserratMed'),)
+                              ),
+                            ),
                           ),
-                          SizedBox(width: 5,),
-                          Text('Sign in with Google',style: TextStyle( fontSize: 14,color: Colors.black,fontStyle: FontStyle.normal,fontWeight: FontWeight.bold,fontFamily: 'MontserratReg'),),
-                        ],
-                      ),
-                      SizedBox(height: 20,),
-                      GestureDetector(child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text('New here, ',style: TextStyle(color: Color(0xFFff9e33),fontFamily: 'MontserratMed',fontSize:   15),),
-                          Text('Sign Up',style: TextStyle(color: Color(0xFFff9e33),fontFamily: 'MontserratSemi',decoration: TextDecoration.underline,fontSize: 15),),
-                        ],
-                      ),onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>SignUp()));
-                      },)
-                    ],
+                        ),
+                        SizedBox(height: 30,),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: InkWell(
+                            onTap: ()async{
+                              await login();
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12),  gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFFea9b72),
+                                    Color(0xFFff9e33)
+                                  ]
+                              )),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                                child: Center(child: Text('Log In',style: TextStyle( fontSize: 20,color: Colors.white,fontStyle: FontStyle.normal,fontFamily: 'MontserratSemi'),)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SignInButtonBuilder(
+                              elevation: 2,
+                              textColor: Colors.black,
+                              mini: true,
+                              shape: CircleBorder(),
+                              icon: FontAwesomeIcons.google,
+                              onPressed: ()async{
+                                await handleGoogleSignIn(context);
+                              }, backgroundColor: Colors.red.shade900, text: 'a',
+                            ),
+                            SizedBox(width: 5,),
+                            Text('Sign in with Google',style: TextStyle( fontSize: 14,color: Colors.black,fontStyle: FontStyle.normal,fontWeight: FontWeight.bold,fontFamily: 'MontserratReg'),),
+                          ],
+                        ),
+                        SizedBox(height: 20,),
+                        GestureDetector(child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text('New here, ',style: TextStyle(color: Color(0xFFff9e33),fontFamily: 'MontserratMed',fontSize:   15),),
+                            Text('Sign Up',style: TextStyle(color: Color(0xFFff9e33),fontFamily: 'MontserratSemi',decoration: TextDecoration.underline,fontSize: 15),),
+                          ],
+                        ),onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>SignUp()));
+                        },)
+                      ],
+                    ),
                   ),
                 ),
               ),

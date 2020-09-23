@@ -41,7 +41,8 @@ class _QuestionAireState extends State<QuestionAire> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Center(
-                child: Column(
+                child: ListView(
+                  shrinkWrap: true,
                   children: [
                     SizedBox(height: 40,),
                     Align(

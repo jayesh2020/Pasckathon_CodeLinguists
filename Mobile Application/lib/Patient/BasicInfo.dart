@@ -18,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'dart:math' as math;
 
 import 'package:pascathon/Patient/Dashboard.dart';
+import 'package:pascathon/main.dart';
 
 class BasicInfo extends StatefulWidget {
   @override
@@ -39,6 +40,7 @@ class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMix
   Animation<double> _fadeAnimation;
   bool load=false;
   User _user;
+  Color mainColour=Color(0xFFea9b72);
   String bloodGroup;
   String address;
   TextEditingController _addressController=TextEditingController();
@@ -77,6 +79,8 @@ class _BasicInfoState extends State<BasicInfo> with SingleTickerProviderStateMix
 //      _btnController.reset();
     });
   }
+
+
 
   Future<void> addUser() async {
     CollectionReference collectionReference;
