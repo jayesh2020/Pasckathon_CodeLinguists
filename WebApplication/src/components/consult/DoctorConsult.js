@@ -148,8 +148,8 @@ const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, boo
         e.preventDefault();
         console.log(selectDate);
         if(timeSlot && selectDate){
-            bookAppointment({selectedDoctor, predict, timeSlot, dateOf: selectDate, patientUid:auth.uid, doctorUid: selectedDoctor.uid});
-            generateReport({ patientUid: auth.uid, predict, doctorSearch, selectedDoctor });
+            bookAppointment({selectedDoctor, predict, timeSlot, dateOf: selectDate, questions: doctorSearch.questions, patientUid:auth.uid, doctorUid: selectedDoctor.uid});
+            //generateReport({ patientUid: auth.uid, predict, doctorSearch, selectedDoctor });
             //history.push('/dashboard');
         }
     }
