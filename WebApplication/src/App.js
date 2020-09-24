@@ -22,6 +22,7 @@ import Navbar from './shared/Navbar';
 import DoctorSearch from './components/consult/DoctorSearch';
 import DoctorConsult from './components/consult/DoctorConsult';
 import DashboardDoctor from './components/layout/DashboardDoctor';
+import ViewReport from './components/doctorside/ViewReport';
 const store = configureStore();
 //const history = createBrowserHistory();
 const App = () => {
@@ -77,6 +78,7 @@ useEffect(() => {
             <PrivateRouter path='/patientsinfo' component={PatientsInfo} />
             <PrivateRouter path='/doctorsinfo' component={DoctorsInfo} />
             <PrivateRouter path='/doctorsearch' component={DoctorSearch} />
+            <PrivateRouter path='/doctor/report' component={ViewReport} />
             <PrivateRouter
               path='/doctor/consult/:id'
               component={DoctorConsult}
