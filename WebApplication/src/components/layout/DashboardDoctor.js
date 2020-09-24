@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getAppointments } from '../../actions/docDashFun';
-
+import { Link } from 'react-router-dom';
 const DashboardDoctor = ({ auth, docDashFunc, getAppointments }) => {
   useEffect(() => {
     getAppointments(auth.uid);
@@ -23,6 +23,7 @@ const DashboardDoctor = ({ auth, docDashFunc, getAppointments }) => {
           ))}
         </div>
       )}
+      <Link to='/doctorsinfo'>doctorsinfo</Link>
     </div>
   );
 };

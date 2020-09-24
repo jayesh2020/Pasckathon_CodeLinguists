@@ -71,7 +71,10 @@ useEffect(() => {
             <PublicRouter exact path='/' component={Signup} />
             <PublicRouter path='/login' component={Signin} />
             <PrivateRouter path='/dashboard' component={DashboardPatient} />
-            <PrivateRouter path='/doctor/dashboard' component={DashboardDoctor} />
+            <PrivateRouter
+              path='/doctor/dashboard'
+              component={DashboardDoctor}
+            />
             <PrivateRouter path='/imagetest' component={ImageTest} />
             <PrivateRouter path='/personalinfo' component={PersonalInfo} />
             <PrivateRouter path='/patientsinfo' component={PatientsInfo} />
