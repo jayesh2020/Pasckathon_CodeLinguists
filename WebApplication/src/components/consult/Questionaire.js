@@ -1,49 +1,113 @@
-import React,{ useState } from 'react'
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { setQuest } from '../../actions/doctorSearch';
+import {
+  MDBRangeInput,
+  MDBRow,
+  MDBContainer,
+  MDBInput,
+  MDBInputGroup,
+} from 'mdbreact';
 
 const Questionaire = ({ setQuest }) => {
-    const [duration,setDuration] = useState('');
-    const [severity,setSeverity] = useState('');
-    const [timeOf,setTimeOf] = useState([]);
-    const [prevMed,setPrevMed] = useState('');
-    const [bodyPart,setBodyPart] = useState('');
-    const handleInputChange = (event) => {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
-        setTimeOf([...timeOf,event.target.value]);
-    }
-    return (
-        <div>
-            <form>
-                <div>
-                    <label htmlFor="duration">Duration for which you are facing issues?</label>
-                    <input type="text" name="duration" value={duration} onChange={(e) => setDuration(e.target.value)} />
-                </div>
-                <div>
-                    <label htmlFor="severity">What is the severity of disease?</label>
-                    <input type="text" name="severity" value={severity} onChange={(e) => setSeverity(e.target.value)} />
-                </div>
-                <div>
-                    <label htmlFor="prevMed">Any previous medications</label>
-                    <textarea name="prevMed" value={prevMed} onChange={(e) => setPrevMed(e.target.value)}></textarea>
-                </div>
-                <div>
-                    <label htmlFor="timeOf">Time of day you face problems</label>
-                    <input name="timeOf" value={timeOf} onChange={(e) => setTimeOf(e.target.value)}></input>
-                </div>
-                <div>
-                    <label htmlFor="bodyPart">Which part of body</label>
-                    <input name="bodyPart" value={bodyPart} onChange={(e) => setBodyPart(e.target.value)}></input>
-                </div>
-                <button onClick={(e) => {
-                    e.preventDefault();
-                    setQuest({duration,severity,prevMed,timeOf,bodyPart});
-                }}>Submit</button>
-            </form>
+  const [duration, setDuration] = useState('');
+  const [severity, setSeverity] = useState('');
+  const [timeOf, setTimeOf] = useState([]);
+  const [prevMed, setPrevMed] = useState('');
+  const [bodyPart, setBodyPart] = useState('');
+  const handleInputChange = (event) => {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    setTimeOf([...timeOf, event.target.value]);
+  };
+  return (
+    <MDBContainer style={{ maxWidth: 600, marginTop: 20 }}>
+      <form>
+        <div className='form-group row'>
+          <div className='col-sm-9'>
+            <MDBInput
+              outline
+              size='md'
+              label='Duration of issue'
+              name='duration'
+              type='text'
+              value={duration}
+              className='form-control'
+              onChange={(e) => setDuration(e.target.value)}
+            />
+          </div>
         </div>
-    )
-}
+        <div className='my-5'>
+          <label htmlFor='customRange1'>Severity</label>
+          <input
+            type='range'
+            className='custom-range'
+            id='serverity'
+            min='1'
+            max='5'
+            step='1'
+          />
+        </div>
+        <div className='form-group row'>
+          <div className='col-sm-9'>
+            <MDBInput
+              outline
+              size='md'
+              label='Previous Medication(Home Remedies)'
+              name='prevMed'
+              type='text'
+              value={prevMed}
+              className='form-control'
+              onChange={(e) => setPrevMed(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className='form-group row'>
+          <div className='col-sm-9'>
+            <MDBInputGroup
+              prepend='Time of day'
+              inputs={
+                <select
+                  className='form-control browser-default custom-select'
+                  id='Time of day'
+                  value={timeOf}
+                  onChange={(e) => setTimeOf(e.target.value)}
+                >
+                  <option value='Early Morning'>Early Morning</option>
+                  <option value='Afternoon'>Afternoon</option>
+                  <option value='Evening'>Evening</option>
+                  <option value='Night'>Night</option>
+                </select>
+              }
+            />
+          </div>
+        </div>
+        <div className='form-group row'>
+          <div className='col-sm-9'>
+            <MDBInput
+              outline
+              size='md'
+              label='Which part of Body'
+              name='bodypart'
+              type='text'
+              value={bodyPart}
+              className='form-control'
+              onChange={(e) => setBodyPart(e.target.value)}
+            />
+          </div>
+        </div>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            setQuest({ duration, severity, prevMed, timeOf, bodyPart });
+          }}
+        >
+          Submit
+        </button>
+      </form>
+    </MDBContainer>
+  );
+};
 
-export default connect(null,{ setQuest })(Questionaire);
+export default connect(null, { setQuest })(Questionaire);

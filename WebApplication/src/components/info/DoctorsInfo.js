@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { setDoctorInfo,setDoctorUser } from '../../actions/info';
+import { setDoctorInfo, setDoctorUser } from '../../actions/info';
 import { connect } from 'react-redux';
-
-const DoctorsInfo = ({ auth,info,setDoctorUser,setDoctorInfo }) => {
+import { Container } from 'react-bootstrap';
+import { MDBInput } from 'mdbreact';
+const DoctorsInfo = ({ auth, history, info, setDoctorUser, setDoctorInfo }) => {
   const [clinicAddress, setAddress] = useState('');
   const [experience, setExperience] = useState('');
   const [qualification, setQualifications] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [registrationNumber,setReg] = useState('');
-  const [clinicSince,setCli] = useState('');
-  const [appointments,setAppoint] = useState({});
+  const [registrationNumber, setReg] = useState('');
+  const [clinicSince, setCli] = useState('');
+  const [appointments, setAppoint] = useState({});
   const onSubmit = (e) => {
     e.preventDefault();
     const doctor = {
@@ -22,16 +23,16 @@ const DoctorsInfo = ({ auth,info,setDoctorUser,setDoctorInfo }) => {
       //profilePicture,
       //clinicSince,
       registrationNumber,
-      appointments
+      appointments,
     };
     setDoctorInfo(doctor);
     const data = {
       ...doctor,
       ...info.personalInfo,
-      email: auth.user.email
-    }
+      email: auth.user.email,
+    };
     console.log(auth.uid);
-    setDoctorUser({data,uid: auth.uid});
+    setDoctorUser({ data, uid: auth.uid });
     setAddress('');
     setExperience('');
     setQualifications('');
@@ -40,67 +41,95 @@ const DoctorsInfo = ({ auth,info,setDoctorUser,setDoctorInfo }) => {
     setCli('');
     setReg('');
     //setProfilePicture('');
+    history.push('/doctor/dashboard');
   };
   return (
     <div>
-      <form>
-        <div>
-          <input
-            type='text'
-            value={clinicAddress}
-            onChange={(e) => setAddress(e.target.value)}
-          />
+      <Container style={{ maxWidth: 600, marginTop: 20 }}>
+        <div class='form-group row'>
+          <div className='col-sm-9'>
+            <MDBInput
+              outline
+              size='sm'
+              label='Clinic Address'
+              name='address'
+              type='text'
+              value={clinicAddress}
+              className='form-control'
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </div>
         </div>
-        <div>
-          <input
-            type='text'
-            value={experience}
-            onChange={(e) => setExperience(e.target.value)}
-          />
+        <div class='form-group row'>
+          <div className='col-sm-9'>
+            <MDBInput
+              outline
+              size='sm'
+              label='Experience'
+              name='experience'
+              type='text'
+              value={experience}
+              className='form-control'
+              onChange={(e) => setExperience(e.target.value)}
+            />
+          </div>
         </div>
-        <div>
-          <input
-            type='text'
-            value={registrationNumber}
-            onChange={(e) => setReg(e.target.value)}
-          />
+        <div class='form-group row'>
+          <div className='col-sm-9'>
+            <MDBInput
+              outline
+              size='sm'
+              label='Qualifications'
+              name='qualfications'
+              type='text'
+              value={qualification}
+              className='form-control'
+              onChange={(e) => setQualifications(e.target.value)}
+            />
+          </div>
         </div>
-        
-        <div>
-          <input
-            type='text'
-            value={qualification}
-            onChange={(e) => setQualifications(e.target.value)}
-          />  
+        <div class='form-group row'>
+          <div className='col-sm-9'>
+            <MDBInput
+              outline
+              size='sm'
+              label='Clinic Opens At'
+              name='Start Time'
+              type='time'
+              value={startTime}
+              className='form-control'
+              onChange={(e) => setStartTime(e.target.value)}
+            />
+          </div>
         </div>
-        <div>
-          <input
-            type='text'
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-          />
+        <div class='form-group row'>
+          <div className='col-sm-9'>
+            <MDBInput
+              outline
+              size='sm'
+              label='Clinic Closes At'
+              name='End Time'
+              type='time'
+              value={endTime}
+              className='form-control'
+              onChange={(e) => setEndTime(e.target.value)}
+            />
+          </div>
         </div>
-        <div>
-          <input
-            type='text'
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-          />
-        </div>
-        <button onClick={onSubmit}>Next</button>
-      </form>
+        <button onClick={onSubmit}>Submit</button>
+      </Container>
     </div>
   );
 };
 
-const mapStateToProps = state => ({
-  info : state.info,
-  auth: state.auth
+const mapStateToProps = (state) => ({
+  info: state.info,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   setDoctorInfo: (patient) => dispatch(setDoctorInfo(patient)),
-  setDoctorUser: (data) => dispatch(setDoctorUser(data))
+  setDoctorUser: (data) => dispatch(setDoctorUser(data)),
 });
 
-export default connect(mapStateToProps,mapDispatchToProps)(DoctorsInfo);
+export default connect(mapStateToProps, mapDispatchToProps)(DoctorsInfo);
