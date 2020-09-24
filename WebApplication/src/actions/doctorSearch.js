@@ -7,7 +7,7 @@ export const getDoctors = (uid) => async dispatch => {
     console.log(patientData);
     // or get all docs matching the query
     firestore.collection("Doctors")
-    //.where("city", "==", patientData.city)
+    .where("city", "==", patientData.city)
     .get()
     .then(querySnapshot => {
         console.log(querySnapshot);
@@ -44,7 +44,7 @@ export const getDoctor = (uid) => async dispatch => {
     });
 }
 
-export const bookAppointment = ({selectedDoctor, predict, timeSlot, dateOf,patientUid,doctorUid}) => async dispatch => {
+export const bookAppointment = ({selectedDoctor, predict, timeSlot, dateOf, questions,patientUid,doctorUid}) => async dispatch => {
     const patient = await (await firestore.doc(`Patients/${patientUid}`).get()).data();
     const ref = firestore.doc(`Doctors/${doctorUid}`);
     const res = await ref.update(selectedDoctor);
@@ -56,20 +56,55 @@ export const bookAppointment = ({selectedDoctor, predict, timeSlot, dateOf,patie
         patientEmail: patient.email,
         patientProfilePic: patient.profilePic,
         diseasePrediction: predict.diseaseName,
-        description: predict.description
+        description: predict.description,
+        patientId: patientUid,
+        doctorId: selectedDoctor.uid,
+        patientNumber: patient.phoneNumber,
+        gender: patient.gender,
+        city: patient.city,
+        patientHeight: patient.height,
+        patientWeight: patient.weight,
+        allergies: patient.allergies,
+        bloodGroup: patient.bloodGroup,
+        duration: questions.duration,
+        severity: questions.severity,
+        timeOfDay: questions.timeOf,
+        prevMed: questions.prevMed,
+        bodyPart: questions.bodyPart,
+        diseaseUrl: predict.fireBaseUrl
     };
     const data1 = {
         time: timeSlot,
         date: dateOf,
         doctorName: selectedDoctor.name,
         doctorEmail: selectedDoctor.email,
-        doctorProfilePic: selectedDoctor.profilePic
+        doctorProfilePic: selectedDoctor.profilePic,
+        diseasePrediction: predict.diseaseName,
+        description: predict.description,
+        patientId: patientUid,
+        doctorId: selectedDoctor.uid,
+        gender: patient.gender,
+        city: patient.city,
+        patientHeight: patient.height,
+        patientWeight: patient.weight,
+        allergies: patient.allergies,
+        bloodGroup: patient.bloodGroup,
+        duration: questions.duration,
+        severity: questions.severity,
+        timeOfDay: questions.timeOf,
+        prevMed: questions.prevMed,
+        bodyPart: questions.bodyPart,
+        diseaseUrl: predict.fireBaseUrl
     }
     const re = await ref.collection('Appointments').add(data);
     const re1 = await firestore.doc(`Patients/${patientUid}`).collection('Appointments').add(data1);
     console.log(res);
     console.log(re1);
     console.log(re);
+    dispatch({
+        type: 'SET_REPORT',
+        payload: data
+    });
 }
 
 export const generateReport = ({ patientUid, predict, doctorSearch, selectedDoctor }) => async dispatch => {
