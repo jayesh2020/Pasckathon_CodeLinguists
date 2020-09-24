@@ -22,7 +22,6 @@ import Navbar from './shared/Navbar';
 import DoctorSearch from './components/consult/DoctorSearch';
 import DoctorConsult from './components/consult/DoctorConsult';
 import DashboardDoctor from './components/layout/DashboardDoctor';
-import { createBrowserHistory } from 'history/createBrowserHistory';
 const store = configureStore();
 //const history = createBrowserHistory();
 const App = () => {

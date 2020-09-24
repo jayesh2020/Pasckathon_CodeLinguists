@@ -150,7 +150,7 @@ const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, boo
         if(timeSlot && selectDate){
             bookAppointment({selectedDoctor, predict, timeSlot, dateOf: selectDate, patientUid:auth.uid, doctorUid: selectedDoctor.uid});
             generateReport({ patientUid: auth.uid, predict, doctorSearch, selectedDoctor });
-            history.push('/dashboard');
+            //history.push('/dashboard');
         }
     }
 
@@ -176,7 +176,6 @@ const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, boo
                   {toggler && <Button variant="orange text-white bold" onClick={submitRes}>Submit</Button>}
                 </Card.Body>
               </Card>
-                
             </div>}
 
         </div>
