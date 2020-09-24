@@ -2,6 +2,14 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getAppointments } from '../../actions/docDashFun';
 import { Link } from 'react-router-dom';
+import {
+  MDBContainer,
+  MDBBtn,
+  MDBModal,
+  MDBModalBody,
+  MDBModalHeader,
+  MDBModalFooter,
+} from 'mdbreact';
 const DashboardDoctor = ({ auth, docDashFunc, getAppointments }) => {
   useEffect(() => {
     getAppointments(auth.uid);
@@ -9,20 +17,40 @@ const DashboardDoctor = ({ auth, docDashFunc, getAppointments }) => {
   const { appointments } = docDashFunc;
   return (
     <div>
-      Dashboard
-      {appointments && (
-        <div>
-          <h3>Appointments</h3>
-          {appointments.map((appoint) => (
+      <MDBContainer>
+        <MDBModal isOpen={true} centered>
+          <MDBModalHeader>Patients Report</MDBModalHeader>
+          <MDBModalBody>
             <div>
-              <img src={appoint.patientProfilePic} height='30%' width='30%' />
-              <p> Name: {appoint.patientName}</p>
-              <p>Appointment Time: {appoint.appointmentTime}</p>
-              <p>Appointment Date: {appoint.diseasePrediction}</p>
+              {appointments && (
+                <div>
+                  <h3>Appointments</h3>
+                  {appointments.map((appoint) => (
+                    <div>
+                      <img
+                        src={appoint.patientProfilePic}
+                        height='30%'
+                        width='30%'
+                      />
+                      <p> Name: {appoint.patientName}</p>
+                      <p>Appointment Time: {appoint.appointmentTime}</p>
+                      <p>Appointment Date: {appoint.diseasePrediction}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          ))}
-        </div>
-      )}
+          </MDBModalBody>
+          <MDBModalFooter>
+            <div style={{ position: 'absolute', left: '0' }}>
+              <MDBBtn color='secondary'>In Person Diagnosis</MDBBtn>
+            </div>
+            <div style={{ right: '0' }}>
+              <MDBBtn color='primary'>Online Diagnosis</MDBBtn>
+            </div>
+          </MDBModalFooter>
+        </MDBModal>
+      </MDBContainer>
       <Link to='/doctorsinfo'>doctorsinfo</Link>
     </div>
   );

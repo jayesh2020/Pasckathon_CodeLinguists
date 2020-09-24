@@ -65,20 +65,6 @@ const PatientsInfo = ({
           </div>
           <div className='form-group row'>
             <div className='col-sm-9'>
-              <MDBInput
-                outline
-                size='md'
-                label='Any Allergies'
-                name='allergy'
-                type='text'
-                value={allergies}
-                className='form-control'
-                onChange={(e) => setAllergies(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className='form-group row'>
-            <div className='col-sm-9'>
               <MDBInputGroup
                 prepend='Blood Group'
                 inputs={

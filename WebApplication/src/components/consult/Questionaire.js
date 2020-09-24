@@ -39,15 +39,17 @@ const Questionaire = ({ setQuest }) => {
           </div>
         </div>
         <div className='my-5'>
-          <label htmlFor='customRange1'>Severity</label>
-          <input
-            type='range'
-            className='custom-range'
-            id='serverity'
-            min='1'
-            max='5'
-            step='1'
-          />
+          <div className='col-sm-9'>
+            <label htmlFor='customRange1'>Severity</label>
+            <input
+              type='range'
+              className='custom-range'
+              id='serverity'
+              min='1'
+              max='5'
+              step='1'
+            />
+          </div>
         </div>
         <div className='form-group row'>
           <div className='col-sm-9'>
