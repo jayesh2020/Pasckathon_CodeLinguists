@@ -1,5 +1,6 @@
 const initalState = {
   appointments: null,
+  currentReport: {}
 };
 
 export default (state = initalState, action) => {
@@ -9,6 +10,16 @@ export default (state = initalState, action) => {
         ...state,
         appointments: action.payload,
       };
+    case 'SET_CURRENT_REPORT':
+      return {
+        ...state,
+        currentReport: action.payload
+      };
+    case 'CLEAR_REPORT':
+      return {
+        ...state,
+        currentReport: null
+      }
     default:
       return state;
   }
