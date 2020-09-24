@@ -12,16 +12,26 @@ const DoctorsInfo = ({ auth, history, info, setDoctorUser, setDoctorInfo }) => {
   const [registrationNumber, setReg] = useState('');
   const [clinicSince, setCli] = useState('');
   const [appointments, setAppoint] = useState({});
+
+  const states = {
+    clinicAddress: '',
+    experience: 'Otto',
+    qualfication: '',
+    startTime: '',
+    endTime: '',
+    onlineConsultingFee: '',
+    inPersonConsultingFee: '',
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
+    e.target.className += ' was-validated';
     const doctor = {
       clinicAddress,
       experience,
       qualification,
       startTime,
       endTime,
-      //profilePicture,
-      //clinicSince,
       registrationNumber,
       appointments,
     };
@@ -46,76 +56,83 @@ const DoctorsInfo = ({ auth, history, info, setDoctorUser, setDoctorInfo }) => {
   return (
     <div>
       <Container style={{ maxWidth: 600, marginTop: 20 }}>
-        <div class='form-group row'>
-          <div className='col-sm-9'>
-            <MDBInput
-              outline
-              size='sm'
-              label='Clinic Address'
-              name='address'
-              type='text'
-              value={clinicAddress}
-              className='form-control'
-              onChange={(e) => setAddress(e.target.value)}
-            />
+        <form className='needs-validation' noValidate>
+          <div class='form-group row'>
+            <div className='col-sm-9'>
+              <MDBInput
+                outline
+                size='sm'
+                label='Clinic Address'
+                name='address'
+                type='text'
+                value={clinicAddress}
+                className='form-control'
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
-        <div class='form-group row'>
-          <div className='col-sm-9'>
-            <MDBInput
-              outline
-              size='sm'
-              label='Experience'
-              name='experience'
-              type='text'
-              value={experience}
-              className='form-control'
-              onChange={(e) => setExperience(e.target.value)}
-            />
+          <div class='form-group row'>
+            <div className='col-sm-9'>
+              <MDBInput
+                outline
+                size='sm'
+                label='Experience'
+                name='experience'
+                type='text'
+                value={experience}
+                className='form-control'
+                onChange={(e) => setExperience(e.target.value)}
+                required
+              />
+            </div>
           </div>
-        </div>
-        <div class='form-group row'>
-          <div className='col-sm-9'>
-            <MDBInput
-              outline
-              size='sm'
-              label='Qualifications'
-              name='qualfications'
-              type='text'
-              value={qualification}
-              className='form-control'
-              onChange={(e) => setQualifications(e.target.value)}
-            />
+          <div class='form-group row'>
+            <div className='col-sm-9'>
+              <MDBInput
+                outline
+                size='sm'
+                label='Qualifications'
+                name='qualfications'
+                type='text'
+                value={qualification}
+                className='form-control'
+                onChange={(e) => setQualifications(e.target.value)}
+                required
+              />
+              <div className='invalid-feedback'>
+                Please provide a valid qualfication.
+              </div>
+            </div>
           </div>
-        </div>
-        <div class='form-group row'>
-          <div className='col-sm-9'>
-            <MDBInput
-              outline
-              size='sm'
-              label='Clinic Opens At'
-              name='Start Time'
-              type='time'
-              value={startTime}
-              className='form-control'
-              onChange={(e) => setStartTime(e.target.value)}
-            />
+          <div class='form-group row'>
+            <div className='col-sm-9'>
+              <MDBInput
+                outline
+                size='sm'
+                label='Clinic Opens At'
+                name='Start Time'
+                type='time'
+                value={startTime}
+                className='form-control'
+                onChange={(e) => setStartTime(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
-        <div class='form-group row'>
-          <div className='col-sm-9'>
-            <MDBInput
-              outline
-              size='sm'
-              label='Clinic Closes At'
-              name='End Time'
-              type='time'
-              value={endTime}
-              className='form-control'
-              onChange={(e) => setEndTime(e.target.value)}
-            />
+          <div class='form-group row'>
+            <div className='col-sm-9'>
+              <MDBInput
+                outline
+                size='sm'
+                label='Clinic Closes At'
+                name='End Time'
+                type='time'
+                value={endTime}
+                className='form-control'
+                onChange={(e) => setEndTime(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
+        </form>
         <button onClick={onSubmit}>Submit</button>
       </Container>
     </div>
