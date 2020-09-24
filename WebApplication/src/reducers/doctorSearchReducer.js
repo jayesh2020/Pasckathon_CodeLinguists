@@ -3,7 +3,7 @@ const initialState = {
     selectedDoctor: null,
     error: '',
     questions:null,
-    report: null
+    report: {}
 };
 
 export default (state = initialState, action) => {

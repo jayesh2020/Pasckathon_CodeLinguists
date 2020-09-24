@@ -52,13 +52,16 @@ const ImageTest = ({ history,predictDisease, predict,auth }) => {
     history.push('/doctorsearch');
   }
   return (
-    <div>
+    <div style={{backgroundColor: "#cccccc",backgroundImage: "linear-gradient(orange, white)",width:"100%",height:"80vh"}}>
       {!toggler && (
         <div>
           <Row>
           <Col lg={4}></Col>
           <Col lg={4}>
-          <input type='file' onChange={handleChange} />
+            <div class="custom-file" style={{marginTop:20}}>
+              <input type="file" onChange={handleChange} class="custom-file-input" id="customFileLang"  />
+              <label class="custom-file-label" for="customFileLang">{state && state.selectedFile.name || 'Select File'}</label>
+            </div>
           </Col>
           </Row>
           <br></br>

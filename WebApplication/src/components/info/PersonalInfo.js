@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { setPersonalInfo } from '../../actions/info';
 import { connect } from 'react-redux';
 import { storage } from '../../firebase/firebase';
+import { MDBDatePickerV5 } from 'mdbreact';
+import { Button } from 'react-bootstrap';
+import { Container } from '@material-ui/core';
 
 const PersonalInfo = ({ history,setPersonalInfo }) => {
   const [toggler,setToggler] = useState(false);
@@ -86,57 +89,77 @@ const PersonalInfo = ({ history,setPersonalInfo }) => {
   return (
     <div>
       {error && <p>{error}</p>}
-      {!toggler && <form>
-        <div>
-          <input
-            type='text'
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+      {!toggler && 
+        <Container style={{maxWidth:600, marginTop:20}}>
+        <form>
+        <div class="form-group row">
+          <label for="name" class="col-sm-3 col-form-label">Name</label>
+          <div class="col-sm-9">
+            <input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} class="form-control" id="name" />
+          </div>
         </div>
-        <div></div>
-        <div>
+        
+        <div className="form-group row">
+        <label for="date" class="col-sm-3 col-form-label">Date of Birth</label>
+        <div className="col-sm-9">
           <input
             type='date'
+            name="date"
+            id="date"
+            className="form-control"
             value={dob}
             onChange={(e) => setDOB(e.target.value)}
           />
         </div>
-        <div>
+        </div>
+        <div class="form-group row">
+          <label for="phone" class="col-sm-3 col-form-label">Phone Number</label>
+          <div className="col-sm-9">
           <input
+            name="phone"
             type='text'
+            id="phone"
+            className="form-control"
             value={phoneNumber}
             onChange={(e) => setNumber(e.target.value)}
           />
+          </div>
         </div>
-        <div>
+        <div class="form-group row">
+          <label for="city" class="col-sm-3 col-form-label">City</label>
+          <div className="col-sm-9">
           <input
+            name="city"
             type='text'
             value={city}
+            className="form-control"
             onChange={(e) => setCity(e.target.value)}
           />
+          </div>
         </div>
-        <div>
-          <select
-            name='gender'
-            value={gender}
-            id='gender'
-            onChange={(e) => setGender(e.target.value)}
-          >
+        
+        <div class="form-group row">
+          <label for="exampleFormControlSelect1" class="col-sm-3 col-form-label">Gender</label>
+          <div className="col-sm-9">
+          <select class="form-control" id="exampleFormControlSelect1" value={gender} onChange={(e) => setGender(e.target.value)}>
             <option value='Male'>Male</option>
             <option value='Female'>Female</option>
           </select>
+          </div>
         </div>
-        <div>
-          <input 
-            type="file"
-            onChange={handleImageAsFile}
-          />
-          <button onClick={handleFireBaseUpload}>Upload</button>
+        <div class="form-group row custom-file" style={{marginTop:20}}>
+          <label className="col-sm-3 col-form-label">Profile Pic</label>
+          <div className="col-sm-9" name="fileInput" id="fileInput">
+            <label class="custom-file-label" for="customFileLang">Select File</label>
+              <input type="file" onChange={handleImageAsFile} class="custom-file-input form-control" id="customFileLang"  />
+          </div>
+            {imageAsFile && <button type="button" className="btn btn-warning" onClick={handleFireBaseUpload}>Upload</button>}
         </div>
+        
         {imageAsUrl&&<img src={imageAsUrl.imgUrl} alt="image tag" />}
-        <button onClick={onSubmit}>Next</button>
-      </form>}
+        <button type="button" className="btn btn-primary" onClick={onSubmit}>Next</button>
+      </form>
+      </Container>}
       {toggler && <div>
         <h3>Define your role</h3>
         <div onChange={onChangeValue} required>
