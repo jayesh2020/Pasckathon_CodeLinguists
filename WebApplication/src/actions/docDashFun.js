@@ -45,11 +45,22 @@ export const setCurrentReport = ({report}) => async dispatch => {
   });
 }
 
-export const changeProgress = ({report,b}) => async dispatch => {
-  console.log(b);
-  report.progress = 'b';
-  await firestore.doc(`Doctors/${report.doctorId}/Reports/${report.id}`).update(report);
-  //await firestore.doc(`Patients/${report.patientId}/Reports`)
+export const changeProgress = ({report,status}) => async dispatch => {
+  
+  report.progress = status;
+  await firestore.doc(`Doctors/${report.doctorId}/Reports/${report.id}`).update({progress: status});
+  const data_ref = firestore.doc(`Patients/${report.patientId}`).collection('Reports').where("diseaseUrl","==",report.diseaseUrl);
+  data_ref.get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      doc.ref.update({
+        progress: status
+      });
+    });
+  });
+  dispatch({
+    type: 'CHANGED_REPORT_STATUS',
+    payload: report
+  })
 }
 
 export const clearCurrentReport = () => async dispatch => {

@@ -8,6 +8,10 @@ import {
   MDBModalBody,
   MDBModalHeader,
   MDBModalFooter,
+  Container,
+  Card,
+  Row,
+  Col
 } from 'mdbreact';
 import {
   getAppointments,
@@ -45,9 +49,16 @@ const DashboardDoctor = ({
     cancelAppointment({ appoint });
   };
 
+  const handleInPerson = (report) => {
+    if(report.progress == 'a' || report.progress == 'b'){
+      changeProgress({report, status: 'd'})
+    }
+    setConsultToggler(false);
+  }
+
   const viewReportClick = (report) => {
     if (report.progress == 'a') {
-      changeProgress({ report, b: 'b' });
+      changeProgress({ report,status: 'b' });
     }
     setToggler(true);
   };
@@ -73,43 +84,51 @@ const DashboardDoctor = ({
           {reports && (
             <div>
               {reports && <h3>Reports</h3>}
-              {reports.map((report) => (
-                <div>
-                  <img
-                    src={report.patientProfilePic}
-                    height='30%'
-                    width='30%'
-                  />
-                  <p> Name: {report.patientName}</p>
-                  <p> Number: {report.patientNumber}</p>
-                  <button
-                    className='btn btn-warning text-white'
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setCurrentReport({ report });
-                      viewReportClick(report);
-                    }}
-                  >
-                    View Report
-                  </button>
-                  <button
-                    className='btn btn-warning text-white'
-                    onClick={(e) => {
-                      e.preventDefault();
-                      toggleConsult();
-                    }}
-                  >
-                    Start Consulting
-                  </button>
-                </div>
-              ))}
+                <Row lg={3}>
+                {reports.map((report) => (
+                  <Col>
+                  <div>
+                    
+                    <img
+                      src={report.patientProfilePic}
+                      height='30%'
+                      width='30%'
+                    />
+                    <p> Name: {report.patientName}</p>
+                    <p> Number: {report.patientNumber}</p>
+                    <button
+                      className='btn btn-warning text-white'
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentReport({ report });
+                        viewReportClick(report);
+                      }}
+                    >
+                      View Report
+                    </button>
+                    {(report.progress != 'c' && report.progress != 'd') && <button
+                      className='btn btn-warning text-white'
+                      onClick={(e) => {
+                        e.preventDefault();
+                        toggleConsult();
+                        setCurrentReport({report});
+                      }}
+                    >
+                      Start Consulting
+                    </button>}
+                    {(report.progress == 'd') && <h6>Waiting for confirmation of appoinment from patient</h6>}
+                    </div>
+                  </Col>
+                ))}
+              </Row>
+              
             </div>
           )}
         </div>
         <div>
           {appointments && (
             <div>
-              <h3>Appointments</h3>
+              {appointments && <h3>Appointments</h3>}
               {appointments.map((appoint) => (
                 <div>
                   <img
@@ -147,8 +166,7 @@ const DashboardDoctor = ({
           isOpen={toggler}
           toggle={toggle}
           size='lg'
-          fullHeight
-          position='right'
+          
         >
           <MDBModalHeader toggle={toggle}>Report</MDBModalHeader>
           <MDBModalBody>
@@ -162,7 +180,10 @@ const DashboardDoctor = ({
           </MDBModalBody>
           <MDBModalFooter>
             <div style={{ position: 'absolute', left: '0' }}>
-              <MDBBtn color='secondary'>In Person</MDBBtn>
+              <MDBBtn onClick={(e) => {
+                e.preventDefault();
+                handleInPerson(currentReport)
+              }} color='secondary'>In Person</MDBBtn>
             </div>
             <div style={{ right: '0' }}>
               <MDBBtn color='primary' onClick={}>

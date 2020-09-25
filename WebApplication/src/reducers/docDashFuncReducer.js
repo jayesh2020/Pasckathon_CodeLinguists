@@ -26,6 +26,11 @@ export default (state = initalState, action) => {
         ...state,
         currentReport:{}
       }
+    case 'CHANGED_REPORT_STATUS':
+      return {
+        ...state,
+        reports: state.reports.map(report => (report.id == action.payload.id) ? (report=action.payload):report)
+      };
     case 'CLEAR_REPORT':
       return {
         ...state,

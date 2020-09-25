@@ -25,6 +25,7 @@ import DashboardDoctor from './components/layout/DashboardDoctor';
 import ViewReport from './components/doctorside/ViewReport';
 import Questionaire from './components/consult/Questionaire';
 import OnlineConsult from './components/consult/OnlineConsult';
+import DoctorAppBook from './components/consult/DoctorAppBook';
 const store = configureStore();
 //const history = createBrowserHistory();
 const App = () => {
@@ -92,6 +93,7 @@ useEffect(() => {
               path='/doctor/consult/:id'
               component={DoctorConsult}
             />
+            <PrivateRouter path='/doctor/book/:id' component={DoctorAppBook} />
             <PrivateRouter path='/questions' component={Questionaire} />
           </Switch>
         </Router>
