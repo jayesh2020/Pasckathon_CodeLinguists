@@ -9,113 +9,162 @@ import {
   MDBModalHeader,
   MDBModalFooter,
 } from 'mdbreact';
-import { getAppointments,setCurrentReport,cancelAppointment,getReports,clearCurrentReport,changeProgress } from '../../actions/docDashFun';
+import {
+  getAppointments,
+  setCurrentReport,
+  cancelAppointment,
+  getReports,
+  clearCurrentReport,
+  changeProgress,
+} from '../../actions/docDashFun';
 import Report from '../consult/Report';
-const DashboardDoctor = ({ history,auth, docDashFunc, getAppointments,setCurrentReport,cancelAppointment, changeProgress, clearCurrentReport, getReports }) => {
+const DashboardDoctor = ({
+  history,
+  auth,
+  docDashFunc,
+  getAppointments,
+  setCurrentReport,
+  cancelAppointment,
+  changeProgress,
+  clearCurrentReport,
+  getReports,
+}) => {
   useEffect(() => {
     getAppointments(auth.uid);
     getReports(auth.uid);
   }, []);
 
-  const [toggler,setToggler] = useState(false);
-
+  const [toggler, setToggler] = useState(false);
+  const [consultToggler, setConsultToggler] = useState(false);
   const clickHandler = (appoint) => {
-    setCurrentReport({appoint});
+    setCurrentReport({ appoint });
     history.push('/doctor/report');
-  }
+  };
 
   const cancelAppoint = (appoint) => {
-    cancelAppointment({appoint});
-  }
+    cancelAppointment({ appoint });
+  };
 
   const viewReportClick = (report) => {
-    if(report.progress == 'a'){
-      changeProgress({report,b:'b'});
+    if (report.progress == 'a') {
+      changeProgress({ report, b: 'b' });
     }
     setToggler(true);
-  }
+  };
 
   const toggle = () => {
     setToggler(false);
     clearCurrentReport();
-  }
+  };
 
-  const startConsult = (report) => {
-
-  }
-  const { appointments,reports,currentReport } = docDashFunc;
+  const toggleConsult = () => {
+    if (consultToggler === true) setConsultToggler(false);
+    else setConsultToggler(true);
+  };
+  const { appointments, reports, currentReport } = docDashFunc;
   return (
     <div>
       <MDBContainer>
-      <div>
-            {reports && (
-              <div>
-                {reports && <h3>Reports</h3>}
-                {reports.map((report) => (
-                  <div>
-                    <img
-                      src={report.patientProfilePic}
-                      height='30%'
-                      width='30%'
-                    />
-                    <p> Name: {report.patientName}</p>
-                    <p> Number: {report.patientNumber}</p>
-                    <button className="btn btn-warning text-white" onClick={(e) => {
+        <div>
+          {reports && (
+            <div>
+              {reports && <h3>Reports</h3>}
+              {reports.map((report) => (
+                <div>
+                  <img
+                    src={report.patientProfilePic}
+                    height='30%'
+                    width='30%'
+                  />
+                  <p> Name: {report.patientName}</p>
+                  <p> Number: {report.patientNumber}</p>
+                  <button
+                    className='btn btn-warning text-white'
+                    onClick={(e) => {
                       e.preventDefault();
-                      setCurrentReport({report});
+                      setCurrentReport({ report });
                       viewReportClick(report);
-                    }}>View Report</button>
-                    <button className="btn btn-warning text-white" onClick={(e) => {
+                    }}
+                  >
+                    View Report
+                  </button>
+                  <button
+                    className='btn btn-warning text-white'
+                    onClick={(e) => {
                       e.preventDefault();
-                      startConsult(report);}}
-                      >
-                        Start Consulting
-                    </button>
+                      toggleConsult();
+                    }}
+                  >
+                    Start Consulting
+                  </button>
                 </div>
-                ))}
-              </div>
-            )}
-
-          </div>
-          <div>
-            {appointments && (
-              <div>
-                <h3>Appointments</h3>
-                {appointments.map((appoint) => (
-                  <div>
-                    <img
-                      src={appoint.patientProfilePic}
-                      height='30%'
-                      width='30%'
-                    />
-                    <p> Name: {appoint.patientName}</p>
-                    <p>Appointment Time: {appoint.appointmentTime}</p>
-                    <p>Appointment Date: {appoint.diseasePrediction}</p>
-                    <button className="btn btn-warning text-white" onClick={(e) => {
+              ))}
+            </div>
+          )}
+        </div>
+        <div>
+          {appointments && (
+            <div>
+              <h3>Appointments</h3>
+              {appointments.map((appoint) => (
+                <div>
+                  <img
+                    src={appoint.patientProfilePic}
+                    height='30%'
+                    width='30%'
+                  />
+                  <p> Name: {appoint.patientName}</p>
+                  <p>Appointment Time: {appoint.appointmentTime}</p>
+                  <p>Appointment Date: {appoint.diseasePrediction}</p>
+                  <button
+                    className='btn btn-warning text-white'
+                    onClick={(e) => {
                       e.preventDefault();
                       clickHandler(appoint);
-                    }}>Start Appointment</button>
-                    <button className="btn btn-warning text-white" onClick={(e) => {
+                    }}
+                  >
+                    Start Appointment
+                  </button>
+                  <button
+                    className='btn btn-warning text-white'
+                    onClick={(e) => {
                       e.preventDefault();
-                      cancelAppoint(appoint);}}
-                      >
-                        Cancel Appointment
-                    </button>
+                      cancelAppoint(appoint);
+                    }}
+                  >
+                    Cancel Appointment
+                  </button>
                 </div>
-                ))}
-              </div>
-            )}
-
-          </div>
-          <MDBModal isOpen={toggler} toggle={toggle} size="lg" fullHeight position="right">
-            <MDBModalHeader toggle={toggle}>Report</MDBModalHeader>
-            <MDBModalBody>
-              <Report report={currentReport} />
-            </MDBModalBody>
-            <MDBModalFooter>
-              <MDBBtn color="secondary" onClick={toggle}>Close</MDBBtn>
-            </MDBModalFooter>
-          </MDBModal>
+              ))}
+            </div>
+          )}
+        </div>
+        <MDBModal
+          isOpen={toggler}
+          toggle={toggle}
+          size='lg'
+          fullHeight
+          position='right'
+        >
+          <MDBModalHeader toggle={toggle}>Report</MDBModalHeader>
+          <MDBModalBody>
+            <Report report={currentReport} />
+          </MDBModalBody>
+        </MDBModal>
+        <MDBModal isOpen={consultToggler} toggle={toggleConsult} centered>
+          <MDBModalHeader toggle={toggleConsult}>Consult</MDBModalHeader>
+          <MDBModalBody>
+            <h3>Consulting Way</h3>
+          </MDBModalBody>
+          <MDBModalFooter>
+            <div style={{ position: 'absolute', left: '0' }}>
+              <MDBBtn color='secondary'>In Person</MDBBtn>
+            </div>
+            <div style={{ right: '0' }}>
+              <MDBBtn color='primary'>Online</MDBBtn>
+            </div>
+          </MDBModalFooter>
+        </MDBModal>
       </MDBContainer>
       <Link to='/doctorsinfo'>doctorsinfo</Link>
     </div>
@@ -133,6 +182,6 @@ const mapDispatchToProps = (dispatch) => ({
   cancelAppointment: (data) => dispatch(cancelAppointment(data)),
   getReports: (uid) => dispatch(getReports(uid)),
   clearCurrentReport: () => dispatch(clearCurrentReport()),
-  changeProgress : (data) => dispatch(changeProgress(data))
+  changeProgress: (data) => dispatch(changeProgress(data)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardDoctor);
