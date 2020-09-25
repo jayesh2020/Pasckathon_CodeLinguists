@@ -1,7 +1,7 @@
-# keras_server.py 
+# Run Train.pynb and gernerate a model
+# pip install requirements.txt
 
 # Python program to expose a ML model as flask REST API 
-
 # import the necessary modules 
 from keras.models  import load_model
 from keras.preprocessing.image import img_to_array 
@@ -67,7 +67,7 @@ def predict():
       image = flask.request.files["image"].read() 
       image = Image.open(io.BytesIO(image)) 
 
-      # Resize it to 224x224 pixels 
+      # Resize it to 64x64 pixels 
       # (required input dimensions for ResNet) 
       image = prepare_image(image, target =(64, 64)) 
 
