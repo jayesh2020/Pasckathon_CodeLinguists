@@ -16,12 +16,14 @@ import io
 app = flask.Flask(__name__) 
 
 label_dict = {0:'Acne and Rosacea Photos',
- 1:'Eczema',
- 2: 'Melnoma'}
-
-#Have model_3_clases.h5 genereted using train.ipynb in same directory of this script
+ 5:'Eczema Photos',
+ 7:'Hair Loss Photos Alopecia and other Hair Diseases',
+ 11:'Melanoma Skin Cancer Nevi and Moles',
+ 12:'Nail Fungus and other Nail Disease',
+ 18:'Tinea Ringworm Candidiasis and other Fungal Infections'}
+ 
    
-model = load_model('model_3_classes.h5')
+model = load_model('drem4.h5')
 
 
 # Every ML/DL model has a specific format 
@@ -43,10 +45,15 @@ def prepare_image(image, target):
 
   # preprocess_input function is meant to 
   # adequate your image to the format the model requires 
-  image = image/255
+  image = image/127.5-1
 
   # return the processed image 
   return image 
+
+@app.route("/")
+def home():
+    return 'Dermetolgy Api'
+
 
 # Now, we can predict the results. 
 @app.route("/predict", methods =["POST"]) 
@@ -62,7 +69,7 @@ def predict():
 
       # Resize it to 224x224 pixels 
       # (required input dimensions for ResNet) 
-      image = prepare_image(image, target =(224, 224)) 
+      image = prepare_image(image, target =(64, 64)) 
 
       # Predict ! global preds, results 
 
