@@ -49,7 +49,7 @@ const ImageTest = ({ history,predictDisease, predict,auth }) => {
   };
 
   const handleClick = () => {
-    history.push('/doctorsearch');
+    history.push('/questions');
   }
   return (
     <div style={{backgroundColor: "#cccccc",backgroundImage: "linear-gradient(orange, white)",width:"100%",height:"80vh"}}>

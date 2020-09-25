@@ -23,6 +23,7 @@ import DoctorSearch from './components/consult/DoctorSearch';
 import DoctorConsult from './components/consult/DoctorConsult';
 import DashboardDoctor from './components/layout/DashboardDoctor';
 import ViewReport from './components/doctorside/ViewReport';
+import Questionaire from './components/consult/Questionaire';
 const store = configureStore();
 //const history = createBrowserHistory();
 const App = () => {
@@ -86,6 +87,7 @@ useEffect(() => {
               path='/doctor/consult/:id'
               component={DoctorConsult}
             />
+            <PrivateRouter path='/questions' component={Questionaire} />
           </Switch>
         </Router>
       </div>
