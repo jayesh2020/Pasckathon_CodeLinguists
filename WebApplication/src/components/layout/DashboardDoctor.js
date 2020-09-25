@@ -44,18 +44,21 @@ const DashboardDoctor = ({ history,auth, docDashFunc, getAppointments,setCurrent
                       <p> Name: {appoint.patientName}</p>
                       <p>Appointment Time: {appoint.appointmentTime}</p>
                       <p>Appointment Date: {appoint.diseasePrediction}</p>
-                    </div>
+                      <button className="btn btn-warning text-white" onClick={(e) => {
+                        e.preventDefault();
+                        clickHandler(appoint);
+                      }}>Start Appointment</button>
+                      <button className="btn btn-warning text-white" onClick={(e) => {
+                        e.preventDefault();
+                        cancelAppoint(appoint);}}
+                        >
+                          Cancel Appointment
+                      </button>
+                  </div>
                   ))}
                 </div>
               )}
-              <img src={appoint.patientProfilePic} height='30%' width='30%' />
-              <p> Name: {appoint.patientName}</p>
-              <p>Appointment Time: {appoint.appointmentTime}</p>
-              <p>Appointment Date: {appoint.diseasePrediction}</p>
-              <button className="btn btn-warning text-white" onClick={(e) => {
-                e.preventDefault();
-                clickHandler(appoint);
-              }}>Start Appointment</button>
+
             </div>
           </MDBModalBody>
           <MDBModalFooter>
@@ -68,12 +71,6 @@ const DashboardDoctor = ({ history,auth, docDashFunc, getAppointments,setCurrent
           </MDBModalFooter>
         </MDBModal>
       </MDBContainer>
-       <button className="btn btn-warning text-white" onClick={(e) => {
-                e.preventDefault();
-                cancelAppoint(appoint);}}
-        >
-          Cancel Appointment
-       </button>
       <Link to='/doctorsinfo'>doctorsinfo</Link>
     </div>
   );
