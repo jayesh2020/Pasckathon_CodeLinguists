@@ -24,6 +24,7 @@ import DoctorConsult from './components/consult/DoctorConsult';
 import DashboardDoctor from './components/layout/DashboardDoctor';
 import ViewReport from './components/doctorside/ViewReport';
 import Questionaire from './components/consult/Questionaire';
+import OnlineConsult from './components/consult/OnlineConsult';
 import DoctorAppBook from './components/consult/DoctorAppBook';
 const store = configureStore();
 //const history = createBrowserHistory();
@@ -79,6 +80,10 @@ useEffect(() => {
               component={DashboardDoctor}
             />
             <PrivateRouter path='/imagetest' component={ImageTest} />
+            <PrivateRouter
+              path='/doctor/onlineconsult'
+              component={OnlineConsult}
+            />
             <PrivateRouter path='/personalinfo' component={PersonalInfo} />
             <PrivateRouter path='/patientsinfo' component={PatientsInfo} />
             <PrivateRouter path='/doctorsinfo' component={DoctorsInfo} />

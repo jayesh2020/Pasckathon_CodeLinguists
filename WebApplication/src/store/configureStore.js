@@ -5,6 +5,7 @@ import dashFuncReducer from '../reducers/dashFuncReducer';
 import docDashFuncReducer from '../reducers/docDashFuncReducer';
 import doctorSearchReducer from '../reducers/doctorSearchReducer';
 import infoReducer from '../reducers/infoReducer';
+import onlineConsultReducer from '../reducers/onlineConsultReducer';
 import predictReducer from '../reducers/predictReducer';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -18,6 +19,7 @@ export default () => {
       doctorSearch: doctorSearchReducer,
       dashFunc: dashFuncReducer,
       docDashFunc: docDashFuncReducer,
+      onlineConsult: onlineConsultReducer,
     }),
     composeEnhancers(applyMiddleware(thunk))
   );
