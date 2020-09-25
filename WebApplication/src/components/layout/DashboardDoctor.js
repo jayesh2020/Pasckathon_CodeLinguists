@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -9,11 +9,15 @@ import {
   MDBModalHeader,
   MDBModalFooter,
 } from 'mdbreact';
-import { getAppointments,setCurrentReport,cancelAppointment } from '../../actions/docDashFun';
-const DashboardDoctor = ({ history,auth, docDashFunc, getAppointments,setCurrentReport,cancelAppointment }) => {
+import { getAppointments,setCurrentReport,cancelAppointment,getReports,clearCurrentReport,changeProgress } from '../../actions/docDashFun';
+import Report from '../consult/Report';
+const DashboardDoctor = ({ history,auth, docDashFunc, getAppointments,setCurrentReport,cancelAppointment, changeProgress, clearCurrentReport, getReports }) => {
   useEffect(() => {
     getAppointments(auth.uid);
+    getReports(auth.uid);
   }, []);
+
+  const [toggler,setToggler] = useState(false);
 
   const clickHandler = (appoint) => {
     setCurrentReport({appoint});
@@ -23,53 +27,95 @@ const DashboardDoctor = ({ history,auth, docDashFunc, getAppointments,setCurrent
   const cancelAppoint = (appoint) => {
     cancelAppointment({appoint});
   }
-  const { appointments } = docDashFunc;
+
+  const viewReportClick = (report) => {
+    if(report.progress == 'a'){
+      changeProgress({report,b:'b'});
+    }
+    setToggler(true);
+  }
+
+  const toggle = () => {
+    setToggler(false);
+    clearCurrentReport();
+  }
+
+  const startConsult = (report) => {
+
+  }
+  const { appointments,reports,currentReport } = docDashFunc;
   return (
     <div>
       <MDBContainer>
-        <MDBModal isOpen={true} centered>
-          <MDBModalHeader>Patients Report</MDBModalHeader>
-          <MDBModalBody>
-            <div>
-              {appointments && (
-                <div>
-                  <h3>Appointments</h3>
-                  {appointments.map((appoint) => (
-                    <div>
-                      <img
-                        src={appoint.patientProfilePic}
-                        height='30%'
-                        width='30%'
-                      />
-                      <p> Name: {appoint.patientName}</p>
-                      <p>Appointment Time: {appoint.appointmentTime}</p>
-                      <p>Appointment Date: {appoint.diseasePrediction}</p>
-                      <button className="btn btn-warning text-white" onClick={(e) => {
-                        e.preventDefault();
-                        clickHandler(appoint);
-                      }}>Start Appointment</button>
-                      <button className="btn btn-warning text-white" onClick={(e) => {
-                        e.preventDefault();
-                        cancelAppoint(appoint);}}
-                        >
-                          Cancel Appointment
-                      </button>
-                  </div>
-                  ))}
+      <div>
+            {reports && (
+              <div>
+                {reports && <h3>Reports</h3>}
+                {reports.map((report) => (
+                  <div>
+                    <img
+                      src={report.patientProfilePic}
+                      height='30%'
+                      width='30%'
+                    />
+                    <p> Name: {report.patientName}</p>
+                    <p> Number: {report.patientNumber}</p>
+                    <button className="btn btn-warning text-white" onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentReport({report});
+                      viewReportClick(report);
+                    }}>View Report</button>
+                    <button className="btn btn-warning text-white" onClick={(e) => {
+                      e.preventDefault();
+                      startConsult(report);}}
+                      >
+                        Start Consulting
+                    </button>
                 </div>
-              )}
+                ))}
+              </div>
+            )}
 
-            </div>
-          </MDBModalBody>
-          <MDBModalFooter>
-            <div style={{ position: 'absolute', left: '0' }}>
-              <MDBBtn color='secondary'>In Person Diagnosis</MDBBtn>
-            </div>
-            <div style={{ right: '0' }}>
-              <MDBBtn color='primary'>Online Diagnosis</MDBBtn>
-            </div>
-          </MDBModalFooter>
-        </MDBModal>
+          </div>
+          <div>
+            {appointments && (
+              <div>
+                <h3>Appointments</h3>
+                {appointments.map((appoint) => (
+                  <div>
+                    <img
+                      src={appoint.patientProfilePic}
+                      height='30%'
+                      width='30%'
+                    />
+                    <p> Name: {appoint.patientName}</p>
+                    <p>Appointment Time: {appoint.appointmentTime}</p>
+                    <p>Appointment Date: {appoint.diseasePrediction}</p>
+                    <button className="btn btn-warning text-white" onClick={(e) => {
+                      e.preventDefault();
+                      clickHandler(appoint);
+                    }}>Start Appointment</button>
+                    <button className="btn btn-warning text-white" onClick={(e) => {
+                      e.preventDefault();
+                      cancelAppoint(appoint);}}
+                      >
+                        Cancel Appointment
+                    </button>
+                </div>
+                ))}
+              </div>
+            )}
+
+          </div>
+          <MDBModal isOpen={toggler} toggle={toggle} size="lg" fullHeight position="right">
+            <MDBModalHeader toggle={toggle}>Report</MDBModalHeader>
+            <MDBModalBody>
+              <Report report={currentReport} />
+            </MDBModalBody>
+            <MDBModalFooter>
+              <MDBBtn color="secondary" onClick={toggle}>Close</MDBBtn>
+            </MDBModalFooter>
+          </MDBModal>
       </MDBContainer>
       <Link to='/doctorsinfo'>doctorsinfo</Link>
     </div>
@@ -84,6 +130,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getAppointments: (uid) => dispatch(getAppointments(uid)),
   setCurrentReport: (data) => dispatch(setCurrentReport(data)),
-  cancelAppointment: (data) => dispatch(cancelAppointment(data))
+  cancelAppointment: (data) => dispatch(cancelAppointment(data)),
+  getReports: (uid) => dispatch(getReports(uid)),
+  clearCurrentReport: () => dispatch(clearCurrentReport()),
+  changeProgress : (data) => dispatch(changeProgress(data))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardDoctor);

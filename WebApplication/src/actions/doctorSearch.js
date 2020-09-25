@@ -111,9 +111,12 @@ export const generateReport = ({ patientUid, predict, doctorSearch, selectedDoct
     const patient = await (await firestore.doc(`Patients/${patientUid}`).get()).data();
     const { questions } = doctorSearch;
     const data = {
+        progress: 'a',
         patientId: patientUid,
         doctorId: selectedDoctor.uid,
-        diseaseName: predict.diseaseName,
+        doctorUrl: selectedDoctor.profilePic,
+        patientProfilePic: patient.profilePic,
+        diseasePrediction: predict.diseaseName,
         description: predict.description,
         patientName: patient.name,
         patientNumber: patient.phoneNumber,

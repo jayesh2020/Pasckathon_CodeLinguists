@@ -1,11 +1,11 @@
-import React,{ useState, useEffect } from 'react';
+import React,{ useState, useEffect, Fragment } from 'react';
 import Questionaire from './Questionaire';
 import { connect } from 'react-redux';
 import { getDoctors, getDoctor,bookAppointment, generateReport } from '../../actions/doctorSearch';
 import { Button, Card } from 'react-bootstrap';
 
 const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, bookAppointment, generateReport}) => {
-    const [toggler,setToggler] = useState(false);
+    const [toggler,setToggler] = useState(true);
     const [selectDate,setSelectDate] = useState('');
     const [timeSlot,setTimeSlot] = useState('');
     const formatDate = (date) => {
@@ -113,7 +113,7 @@ const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, boo
         }
     },[selectedDoctor,lis,selectDate]);
     useEffect(() => {
-        if(questions){
+        if(questions && selectedDoctor){
             setToggler(true);
             const slo = createSlots();
             console.log(slo);
@@ -148,22 +148,47 @@ const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, boo
         e.preventDefault();
         console.log(selectDate);
         if(timeSlot && selectDate){
-            bookAppointment({selectedDoctor, predict, timeSlot, dateOf: selectDate, questions: doctorSearch.questions, patientUid:auth.uid, doctorUid: selectedDoctor.uid});
-            //generateReport({ patientUid: auth.uid, predict, doctorSearch, selectedDoctor });
+            //bookAppointment({selectedDoctor, predict, timeSlot, dateOf: selectDate, questions: doctorSearch.questions, patientUid:auth.uid, doctorUid: selectedDoctor.uid});
+            generateReport({ patientUid: auth.uid, predict, doctorSearch, selectedDoctor });
             //history.push('/dashboard');
         }
     }
 
+    const sendReport = (e) => {
+        e.preventDefault();
+        generateReport({ patientUid: auth.uid, predict, doctorSearch, selectedDoctor });
+        setToggler(false);
+    }
+
     return (
         <div>
-            {!toggler && <Questionaire />}
             {toggler && selectedDoctor && <div>
                 <Card style={{ marginLeft: "auto", marginTop:"20px",marginRight:"auto",width: '30rem',borderRadius:"5px" }}>
                 <Card.Img variant="top" src={selectedDoctor.profilePic} thumbnail style={{maxHeight:"300px",paddingRight:"10px", paddingLeft:"10px", marginTop:"20px", height:"300px", width:"100%", display:"block"}} />
                 <Card.Body>
                   <Card.Title>{selectedDoctor.name}</Card.Title>
                   <Card.Text>
-                  <input type="date" value={selectDate} onChange={(e) => setSelectDate(e.target.value)} max={delayDate} min={curDate} />
+                    <p>{selectedDoctor.qualification}</p>
+                    <p>{selectedDoctor.clinicAddress}</p>
+                    <p>{selectedDoctor.experience}</p>
+                  </Card.Text>
+                  {toggler && <Button variant="orange text-white bold" onClick={sendReport}>Send Report</Button>}
+                </Card.Body>
+              </Card>
+            </div>}
+            {!toggler && <Fragment>
+                <h5>Sent Report to Doctor. Wait for report.</h5>
+                <button className="btn btn-warning" onClick={e => {
+                    e.preventDefault();
+                    history.push('/dashboard');
+                }}>Go to dashboard</button>
+                </Fragment>}
+
+        </div>
+    )
+}
+/*
+<input type="date" value={selectDate} onChange={(e) => setSelectDate(e.target.value)} max={delayDate} min={curDate} />
                   {selectDate && <p>Slots:</p>}
                   {selectDate && slots.map(slot => 
                       <Button
@@ -172,16 +197,7 @@ const DoctorConsult = ({history,match, predict,auth,getDoctor, doctorSearch, boo
                       e.preventDefault();
                       book(slot.timeSlotStart);
                   }}>{slot.timeSlotStart}</Button>)}
-                  </Card.Text>
-                  {toggler && <Button variant="orange text-white bold" onClick={submitRes}>Submit</Button>}
-                </Card.Body>
-              </Card>
-            </div>}
-
-        </div>
-    )
-}
-
+*/
 const mapStateToProps = (state) => ({
     doctorSearch: state.doctorSearch,
     auth: state.auth,

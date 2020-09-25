@@ -9,7 +9,7 @@ import {
   MDBInputGroup,
 } from 'mdbreact';
 
-const Questionaire = ({ setQuest }) => {
+const Questionaire = ({ setQuest,history }) => {
   const [duration, setDuration] = useState('');
   const [severity, setSeverity] = useState('');
   const [timeOf, setTimeOf] = useState([]);
@@ -48,6 +48,7 @@ const Questionaire = ({ setQuest }) => {
               min='1'
               max='5'
               step='1'
+              onChange={e => setSeverity(e.target.value)}
             />
           </div>
         </div>
@@ -99,10 +100,11 @@ const Questionaire = ({ setQuest }) => {
             />
           </div>
         </div>
-        <button
+        <button className="btn btn-primary"
           onClick={(e) => {
             e.preventDefault();
             setQuest({ duration, severity, prevMed, timeOf, bodyPart });
+            history.push('/doctorsearch');
           }}
         >
           Submit

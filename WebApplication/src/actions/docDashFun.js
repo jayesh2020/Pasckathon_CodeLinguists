@@ -19,10 +19,42 @@ export const getAppointments = (uid) => async (dispatch) => {
     });
 };
 
-export const setCurrentReport = ({appoint}) => async dispatch => {
+export const getReports = (uid) => async (dispatch) => {
+  firestore
+    .doc(`Doctors/${uid}`)
+    .collection('Reports')
+    .get()
+    .then((querysnapshot) => {
+      console.log(querysnapshot);
+      const data = querysnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log(data);
+      dispatch({
+        type: 'DOC_GET_REPORTS',
+        payload: data,
+      });
+    });
+};
+
+export const setCurrentReport = ({report}) => async dispatch => {
   dispatch({
       type: 'SET_CURRENT_REPORT',
-      payload: appoint
+      payload: report
+  });
+}
+
+export const changeProgress = ({report,b}) => async dispatch => {
+  console.log(b);
+  report.progress = 'b';
+  await firestore.doc(`Doctors/${report.doctorId}/Reports/${report.id}`).update(report);
+  //await firestore.doc(`Patients/${report.patientId}/Reports`)
+}
+
+export const clearCurrentReport = () => async dispatch => {
+  dispatch({
+    type: 'CLEAR_CURRENT_REPORT'
   });
 }
 
