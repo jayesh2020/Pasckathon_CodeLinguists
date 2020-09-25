@@ -3,7 +3,8 @@ const initialState = {
     selectedDoctor: null,
     error: '',
     questions:null,
-    report: {}
+    report: {},
+    appointment: {}
 };
 
 export default (state = initialState, action) => {
@@ -23,10 +24,10 @@ export default (state = initialState, action) => {
                 ...state,
                 questions: action.payload
             };
-        case 'SET_REPORT':
+        case 'SET_APPOINTMENT':
             return {
                 ...state,
-                report: action.payload
+                appointment: action.payload
             };
         default:
             return state;

@@ -9,18 +9,40 @@ import {
   MDBInputGroup,
 } from 'mdbreact';
 
-const Questionaire = ({ setQuest,history }) => {
+const Questionaire = ({ setQuest,history,predict }) => {
   const [duration, setDuration] = useState('');
   const [severity, setSeverity] = useState('');
   const [timeOf, setTimeOf] = useState([]);
   const [prevMed, setPrevMed] = useState('');
   const [bodyPart, setBodyPart] = useState('');
+  const [symtom, setSymtom] = useState([]);
+
   const handleInputChange = (event) => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
     setTimeOf([...timeOf, event.target.value]);
   };
+
+  const submitRes = (e) => {
+  
+    e.preventDefault();
+    var array = '';
+    var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+
+    for (var i = 0; i < checkboxes.length; i++) {
+      //array.push(checkboxes[i].value)
+      if(array==''){
+        array=checkboxes[i].value
+      }else {
+        array = array+','+checkboxes[i].value;
+      }
+    }
+    console.log(array);
+    setQuest({ duration, severity, prevMed, timeOf, bodyPart, symtoms:array });
+    history.push('/doctorsearch');
+  
+  }
   return (
     <MDBContainer style={{ maxWidth: 600, marginTop: 20 }}>
       <form>
@@ -100,12 +122,16 @@ const Questionaire = ({ setQuest,history }) => {
             />
           </div>
         </div>
+        <div className='form-group row'>
+          <div className='col-sm-9'>
+            {predict.symtoms.map((symtom) => <div class="custom-control custom-checkbox">
+            <input type="checkbox" name="sym" class="custom-control-input" id={symtom} value={symtom} />
+            <label class="custom-control-label" for={symtom}>{symtom}</label>
+          </div>)}
+          </div>
+        </div>
         <button className="btn btn-primary"
-          onClick={(e) => {
-            e.preventDefault();
-            setQuest({ duration, severity, prevMed, timeOf, bodyPart });
-            history.push('/doctorsearch');
-          }}
+          onClick={submitRes}
         >
           Submit
         </button>
@@ -114,4 +140,8 @@ const Questionaire = ({ setQuest,history }) => {
   );
 };
 
-export default connect(null, { setQuest })(Questionaire);
+const mapStateToProps = state => ({
+  predict: state.predict
+})
+
+export default connect(mapStateToProps, { setQuest })(Questionaire);

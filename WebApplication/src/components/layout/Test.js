@@ -69,7 +69,7 @@ const ImageTest = ({ history,predictDisease, predict,auth }) => {
           <Col lg={4}></Col>
           <Col lg={4}>
           {state && 
-            <Image src={state.file} center="true" rounded />
+            <Image src={state.file} center="true" style={{width:"40%",height:"100%"}} />
           }          
           </Col>
           </Row>
@@ -91,7 +91,7 @@ const ImageTest = ({ history,predictDisease, predict,auth }) => {
           <Card.Body>
             <Card.Title>{predict.diseaseName}</Card.Title>
             <Card.Text>
-              {predict.diseaseName && <p>Eczema is a term for a group of conditions that make your skin inflamed or irritated. The most common type is atopic dermatitis or atopic eczema. “Atopic” refers to a person’s tendency to get allergic conditions such as asthma and hay fever.</p>}
+              {predict.diseaseName && <p>{predict.description}</p>}
             </Card.Text>
             {predict.diseaseName && <Button variant="orange text-white text-bold" onClick={handleClick}>Consult a doctor</Button>}
           </Card.Body>
