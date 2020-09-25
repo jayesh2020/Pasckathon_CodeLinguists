@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { MDBContainer, MDBInputGroup } from 'mdbreact';
+import React, { useEffect, useState } from 'react';
+import { MDBContainer, MDBInputGroup,MDBInput, Container } from 'mdbreact';
 import { connect } from 'react-redux';
-const OnlineConsult = ({ docDashFunc }) => {
+import { doctorOnlineSubmit } from '../../actions/onlineConsult';
+const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit }) => {
   const [toggler, setToggler] = useState(false);
   const [medName, setMedName] = useState('');
   const [medTime, setMedTime] = useState('');
@@ -12,11 +13,17 @@ const OnlineConsult = ({ docDashFunc }) => {
 
   const handleConcat = (e) => {
     e.preventDefault();
+    console.log(medName+medTime);
     var c = medName + ',' + medTime;
+    console.log(c);
     setMedicines([...medicines, c]);
+    
     setMedTime('');
     setMedName('');
   };
+  useEffect(() => {
+    console.log(medicines);
+  },[medicines]);
   const { currentReport } = docDashFunc;
   const handleOnlineSubmit = (e) => {
     e.preventDefault();
@@ -51,8 +58,8 @@ const OnlineConsult = ({ docDashFunc }) => {
                   type='checkbox'
                   class='custom-control-input'
                   id='defaultChecked'
-                  checked
-                  onClick={toggle()}
+                  checked={true}
+                  onClick={toggle}
                 />
                 {toggler && (
                   <MDBInput
@@ -74,7 +81,7 @@ const OnlineConsult = ({ docDashFunc }) => {
             <div className='col s4'></div>
             <div className='col s4'>
               <button
-                onClick={handleConcat()}
+                onClick={handleConcat}
                 className='btn-floating btn-large waves-effect waves-light green'
               >
                 <i class='fa fa-plus'>add</i>
@@ -144,7 +151,7 @@ const OnlineConsult = ({ docDashFunc }) => {
               />
             </div>
           </div>
-          <button onClick={onSubmit}>Submit</button>
+          <button onClick={handleOnlineSubmit}>Submit</button>
         </form>
       </Container>
     </div>
@@ -155,12 +162,7 @@ const mapStateToProps = (state) => ({
   docDashFunc: state.docDashFunc,
 });
 
-// const mapDispatchToProps = (dispatch) => ({
-//   getAppointments: (uid) => dispatch(getAppointments(uid)),
-//   setCurrentReport: (data) => dispatch(setCurrentReport(data)),
-//   cancelAppointment: (data) => dispatch(cancelAppointment(data)),
-//   getReports: (uid) => dispatch(getReports(uid)),
-//   clearCurrentReport: () => dispatch(clearCurrentReport()),
-//   changeProgress: (data) => dispatch(changeProgress(data)),
-// });
+const mapDispatchToProps = dispatch => ({
+  doctorOnlineSubmit: (data) => dispatch(doctorOnlineSubmit(data))  
+})
 export default connect(mapStateToProps, mapDispatchToProps)(OnlineConsult);

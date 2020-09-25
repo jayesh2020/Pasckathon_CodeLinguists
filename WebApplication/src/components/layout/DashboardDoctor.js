@@ -186,7 +186,10 @@ const DashboardDoctor = ({
               }} color='secondary'>In Person</MDBBtn>
             </div>
             <div style={{ right: '0' }}>
-              <MDBBtn color='primary' onClick={}>
+              <MDBBtn color='primary' onClick={e => {
+                e.preventDefault();
+                history.push('/doctor/onlineconsult');
+              }}>
                 Online
               </MDBBtn>
             </div>
