@@ -61,6 +61,10 @@ const DashboardDoctor = ({
     if (consultToggler === true) setConsultToggler(false);
     else setConsultToggler(true);
   };
+  const handleOnline = (e) => {
+    e.preventDefault();
+  };
+
   const { appointments, reports, currentReport } = docDashFunc;
   return (
     <div>
@@ -161,7 +165,9 @@ const DashboardDoctor = ({
               <MDBBtn color='secondary'>In Person</MDBBtn>
             </div>
             <div style={{ right: '0' }}>
-              <MDBBtn color='primary'>Online</MDBBtn>
+              <MDBBtn color='primary' onClick={}>
+                Online
+              </MDBBtn>
             </div>
           </MDBModalFooter>
         </MDBModal>
