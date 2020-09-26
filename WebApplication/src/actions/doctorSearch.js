@@ -53,12 +53,14 @@ export const bookAppointment = ({timeSlot, dateOf, report, selectedDoctor}) => a
         time: timeSlot,
         date: dateOf,
         ...report,
+        patientName: patient.patientName,
         progress: 'e'
     };
     const data1 = {
         time: timeSlot,
         date: dateOf,
         ...report,
+        patientName: patient.patientName,
         progress: 'e'
     }
     const re = await ref.collection('Appointments').add(data);
@@ -107,7 +109,8 @@ export const generateReport = ({ patientUid, predict, doctorSearch, selectedDoct
         timeOfDay: questions.timeOf,
         prevMed: questions.prevMed,
         bodyPart: questions.bodyPart,
-        diseaseUrl: predict.fireBaseUrl
+        diseaseUrl: predict.fireBaseUrl,
+        hist:[]
     };
     const data1 = {
         progress: 'a',
@@ -133,7 +136,8 @@ export const generateReport = ({ patientUid, predict, doctorSearch, selectedDoct
         timeOfDay: questions.timeOf,
         prevMed: questions.prevMed,
         bodyPart: questions.bodyPart,
-        diseaseUrl: predict.fireBaseUrl
+        diseaseUrl: predict.fireBaseUrl,
+        hist: []
     };
     const res = await firestore.doc(`Doctors/${selectedDoctor.uid}`).collection('Reports').add(data);
     const res1 = await firestore.doc(`Patients/${patientUid}`).collection('Reports').add(data1);

@@ -51,6 +51,7 @@ const DashboardDoctor = ({
   const [toggler, setToggler] = useState(false);
   const [consultToggler, setConsultToggler] = useState(false);
   const clickHandler = (appoint) => {
+    console.log(appoint);
     setCurrentAppReport({ appoint });
     history.push('/doctor/onlineconsult');
   };

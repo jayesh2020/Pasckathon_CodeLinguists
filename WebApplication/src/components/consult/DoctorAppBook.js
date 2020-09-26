@@ -4,7 +4,7 @@ import { bookAppointment,getDoctor } from '../../actions/doctorSearch';
 import { clearCurrentReport } from '../../actions/dashboardFunc';
 import { Button, Card } from 'react-bootstrap';
 
-const DoctorAppBook = ({ dashFunc,bookAppointment,clearCurrentReport,getDoctor,match,doctorSearch,history }) => {
+const DoctorAppBook = ({ dashFunc,auth,bookAppointment,clearCurrentReport,getDoctor,match,doctorSearch,history }) => {
     const [toggler,setToggler] = useState(false);
     const {currentReport} = dashFunc;
     const [selectDate,setSelectDate] = useState('');
