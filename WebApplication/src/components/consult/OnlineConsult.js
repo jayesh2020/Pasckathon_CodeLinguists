@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MDBContainer, MDBInputGroup,MDBInput, Container } from 'mdbreact';
 import { connect } from 'react-redux';
 import { doctorOnlineSubmit, doctorOnlineSubmit1 } from '../../actions/onlineConsult';
-const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit,doctorOnlineSubmit1 }) => {
+const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit,doctorOnlineSubmit1, history }) => {
   const [toggler, setToggler] = useState(true);
   const [medName, setMedName] = useState('');
   const [medTime, setMedTime] = useState('');
@@ -42,8 +42,10 @@ const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit,doctorOnlineSubmit1 }) 
     console.log(currentAppReport);
     if(currentAppReport!={}&&currentAppReport.progress == 'e'){
       doctorOnlineSubmit1({currentAppReport, updateReport});
+      history.push('/doctor/dashboard');
     } else {
-      doctorOnlineSubmit({currentReport,updateReport})
+      doctorOnlineSubmit({currentReport,updateReport});
+      history.push('/doctor/dashboard');
     }
   };
   const toggle = () => {
