@@ -12,6 +12,7 @@ const DoctorsInfo = ({ auth, history, info, setDoctorUser, setDoctorInfo }) => {
   const [registrationNumber, setReg] = useState('');
   const [clinicSince, setCli] = useState('');
   const [appointments, setAppoint] = useState({});
+  const [fees, setFees] = useState('');
 
   const states = {
     clinicAddress: '',
@@ -30,6 +31,7 @@ const DoctorsInfo = ({ auth, history, info, setDoctorUser, setDoctorInfo }) => {
       clinicAddress,
       experience,
       qualification,
+      fees,
       startTime,
       endTime,
       registrationNumber,
@@ -101,6 +103,24 @@ const DoctorsInfo = ({ auth, history, info, setDoctorUser, setDoctorInfo }) => {
               />
               <div className='invalid-feedback'>
                 Please provide a valid qualfication.
+              </div>
+            </div>
+          </div>
+          <div class='form-group row'>
+            <div className='col-sm-9'>
+              <MDBInput
+                outline
+                size='sm'
+                label='Online Consultation Fees'
+                name='fees'
+                type='text'
+                value={fees}
+                className='form-control'
+                onChange={(e) => setFees(e.target.value)}
+                required
+              />
+              <div className='invalid-feedback'>
+                Please provide online consulation fees. 
               </div>
             </div>
           </div>

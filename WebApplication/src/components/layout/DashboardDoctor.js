@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -37,10 +37,16 @@ const DashboardDoctor = ({
   clearCurrentReport,
   getReports,
 }) => {
+  const { appointments, reports, currentReport } = docDashFunc;
+
   useEffect(() => {
     getAppointments(auth.uid);
     getReports(auth.uid);
   }, []);
+
+  useEffect(() => {
+    console.log("Updating");
+  },[appointments,reports]);
 
   const [toggler, setToggler] = useState(false);
   const [consultToggler, setConsultToggler] = useState(false);
@@ -80,7 +86,6 @@ const DashboardDoctor = ({
     e.preventDefault();
   };
 
-  const { appointments, reports, currentReport } = docDashFunc;
   return (
     <div>
       <MDBContainer>
@@ -88,9 +93,11 @@ const DashboardDoctor = ({
           {reports && (
             <div>
               {reports && <h3>Reports</h3>}
+              {reports.length == 0 && <p>No pending reports to review</p>}
                 <Row lg={3}>
                 {reports.map((report) => (
-                  <Col>
+                  <Fragment>
+                  {(report.progress!='c' && report.progress!='f') && <Col>
                   <div>
                     
                     <img
@@ -122,7 +129,8 @@ const DashboardDoctor = ({
                     </button>}
                     {(report.progress == 'd') && <h6>Waiting for confirmation of appoinment from patient</h6>}
                     </div>
-                  </Col>
+                  </Col>}
+                  </Fragment>
                 ))}
               </Row>
               
@@ -134,7 +142,8 @@ const DashboardDoctor = ({
             <div>
               {appointments && <h3>Appointments</h3>}
               {appointments.map((appoint) => (
-                <div>
+                <Fragment>
+                {appoint.progress != 'f' && <div>
                   <img
                     src={appoint.patientProfilePic}
                     height='30%'
@@ -161,8 +170,48 @@ const DashboardDoctor = ({
                   >
                     Cancel Appointment
                   </button>
-                </div>
+                </div>}
+                </Fragment>
               ))}
+            </div>
+          )}
+        </div>
+        <div>
+          {reports && (
+            <div>
+              {reports && <h3>Verified Reports</h3>}
+              {reports.length == 0 && <p>No pending reports to review</p>}
+                <Row lg={3}>
+                {reports.map((report) => (
+                  <Fragment>
+                  {(report.progress=='c' || report.progress=='f') && <Col>
+                  <div>
+                    
+                    <img
+                      src={report.patientProfilePic}
+                      height='30%'
+                      width='30%'
+                    />
+                    <p> Name: {report.patientName}</p>
+                    <p> Number: {report.patientNumber}</p>
+                    <button
+                      className='btn btn-warning text-white'
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentReport({ report });
+                        viewReportClick(report);
+                      }}
+                    >
+                      View Report
+                    </button>
+                    {report.progress == 'c' && <p>Patient Consulted online</p>}
+                    {report.progress == 'f' && <p>Patient Consulted in person</p>}
+                    </div>
+                  </Col>}
+                  </Fragment>
+                ))}
+              </Row>
+              
             </div>
           )}
         </div>

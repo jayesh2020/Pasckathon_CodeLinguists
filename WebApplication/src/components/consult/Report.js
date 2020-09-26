@@ -2,6 +2,7 @@ import React,{ Fragment, useRef } from 'react';
 import { connect } from 'react-redux';
 
 const Report = ({report}) => {
+    var medic;
     return (
         <div>
             {report && 
@@ -23,21 +24,13 @@ const Report = ({report}) => {
                 <div className="col-sm-2"></div>
 
                 </div>
-                <div className="row">
-                    <div className="col-sm-2"></div>
-                    <div className="col-sm-4">
+                <div>
+                    
                     <h5 style={{color: "ff9800",fontWeight:1000}}>Medical Information</h5>
                     <h6>Height: {report.patientHeight}</h6>
                     <h6>Weight: {report.patientWeight}</h6>
                     <h6>Blood Group: {report.bloodGroup}</h6>
-                    </div>
-                    <div className="col-sm-4">
-                    <h5 style={{color: "ff9800",fontWeight:1000}}>Medical Information</h5>
-                    <h6>Height: {report.patientHeight}</h6>
-                    <h6>Weight: {report.patientWeight}</h6>
-                    <h6>Blood Group: {report.bloodGroup}</h6>
-                    </div>
-                    <div className="col-sm-2"></div>
+                    
                 </div>
                 
                 
@@ -55,6 +48,17 @@ const Report = ({report}) => {
                     <h6>Disease Image</h6>
                     <img src={report.diseaseUrl} height="40%" width="40%" />
                 </div>
+                {report.medications && <div>
+                    <h5 style={{color: "ff9800",fontWeight:1000}}>Doctor Report</h5>
+                    {report.doctorDiseaseName&&<h6>Disease Name: {report.doctorDiseaseName}</h6>}
+                    <h6>Medications:</h6>
+                    {report.medications && report.medications.map(med => (
+                        medic = med.split(","),
+                        <p>{medic[0]}: {medic[1]}</p>
+                    ))}
+                    <h6>Medicine Duration: {report.medicineDuration} days</h6>
+                    {report.otherInfo && <h6>Other Info: {report.otherInfo}</h6>}
+                    </div>}
             </div>}
         </div>
     )
