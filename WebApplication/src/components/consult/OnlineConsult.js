@@ -48,11 +48,16 @@ const OnlineConsult = ({
     }
     console.log(updateReport);
     console.log(currentAppReport);
+<<<<<<< HEAD
     if (
       currentAppReport != {} &&
       (currentAppReport.progress == 'e' || currentAppReport.progress == 'd')
     ) {
       doctorOnlineSubmit1({ currentAppReport, updateReport });
+=======
+    if(currentAppReport!={}&&(currentAppReport.progress == 'e'||currentAppReport.progress=='d')){
+      doctorOnlineSubmit1({currentAppReport, updateReport});
+>>>>>>> 83b7b0d3b5dfbfc8af5fb167128387f55223aa12
       history.push('/doctor/dashboard');
     } else {
       doctorOnlineSubmit({ currentReport, updateReport });

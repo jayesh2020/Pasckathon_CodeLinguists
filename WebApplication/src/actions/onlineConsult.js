@@ -29,15 +29,15 @@ export const doctorOnlineSubmit1 = ({ currentAppReport, updateReport }) => async
     progress: 'f'
   };
   
-  await firestore.doc(`Patients/${currentAppReport.patientId}/Reports/${currentAppReport.id}`).update(newReport);
-  const data_ref = firestore.doc(`Doctors/${currentAppReport.doctorId}`).collection('Reports').where("diseaseUrl","==",currentAppReport.diseaseUrl);
+  await firestore.doc(`Doctors/${currentAppReport.doctorId}/Appointments/${currentAppReport.id}`).update(newReport);
+  const data_ref = firestore.doc(`Patients/${currentAppReport.patientId}`).collection('Appointments').where("diseaseUrl","==",currentAppReport.diseaseUrl);
   data_ref.get().then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
       doc.ref.update(newReport);
     });
   });
   //await firestore.doc(`Patients/${currentAppReport.patientId}/Appointments/${currentAppReport.id}`).update({progress: 'f'});
-  const data_ref2 =   firestore.doc(`Patients/${currentAppReport.patientId}`).collection("Appointments").where("diseaseUrl","==",currentAppReport.diseaseUrl);
+  const data_ref2 =   firestore.doc(`Patients/${currentAppReport.patientId}`).collection("Reports").where("diseaseUrl","==",currentAppReport.diseaseUrl);
   data_ref2.get().then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
     doc.ref.update({
@@ -46,7 +46,7 @@ export const doctorOnlineSubmit1 = ({ currentAppReport, updateReport }) => async
     });
   });
 
-  const data_ref1 = firestore.doc(`Doctors/${currentAppReport.doctorId}`).collection('Appointments').where("diseaseUrl","==",currentAppReport.diseaseUrl);
+  const data_ref1 = firestore.doc(`Doctors/${currentAppReport.doctorId}`).collection('Reports').where("diseaseUrl","==",currentAppReport.diseaseUrl);
     data_ref1.get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
         doc.ref.update({
