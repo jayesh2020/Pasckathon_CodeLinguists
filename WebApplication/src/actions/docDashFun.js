@@ -66,6 +66,22 @@ export const changeProgress = ({report,status}) => async dispatch => {
   })
 }
 
+export const getHistory = ({report}) => async dispatch => {
+  const formData = new FormData();
+  formData.append("patient_id",report.patientId);
+  const da = await axios.post("/patient",formData);
+  const hi = da.data;
+  report = {
+    ...report,
+    hi
+  };
+  console.log(report);
+  dispatch({
+    type: 'SET_CURRENT_REPORT',
+    payload: report
+  });
+}
+
 export const clearCurrentReport = () => async dispatch => {
   dispatch({
     type: 'CLEAR_CURRENT_REPORT'
