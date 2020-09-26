@@ -1,4 +1,5 @@
 import { firestore } from '../firebase/firebase';
+import axios from 'axios';
 
 export const getAppointments = (uid) => async (dispatch) => {
   firestore
@@ -39,6 +40,8 @@ export const getReports = (uid) => async (dispatch) => {
 };
 
 export const setCurrentReport = ({report}) => async dispatch => {
+  
+  
   dispatch({
       type: 'SET_CURRENT_REPORT',
       payload: report

@@ -59,6 +59,8 @@ const Report = ({report}) => {
                     <h6>Medicine Duration: {report.medicineDuration} days</h6>
                     {report.otherInfo && <h6>Other Info: {report.otherInfo}</h6>}
                     </div>}
+                    <div className="divider"></div>
+                    
             </div>}
         </div>
     )

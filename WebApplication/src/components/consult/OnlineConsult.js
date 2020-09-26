@@ -40,7 +40,7 @@ const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit,doctorOnlineSubmit1, hi
     }
     console.log(updateReport);
     console.log(currentAppReport);
-    if(currentAppReport!={}&&currentAppReport.progress == 'e'){
+    if(currentAppReport!={}&&(currentAppReport.progress == 'e'||currentAppReport.progress=='d')){
       doctorOnlineSubmit1({currentAppReport, updateReport});
       history.push('/doctor/dashboard');
     } else {
