@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { MDBContainer, MDBInputGroup,MDBInput, Container } from 'mdbreact';
+import { MDBContainer, MDBInputGroup, MDBInput, Container } from 'mdbreact';
 import { connect } from 'react-redux';
-import { doctorOnlineSubmit, doctorOnlineSubmit1 } from '../../actions/onlineConsult';
-const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit,doctorOnlineSubmit1, history }) => {
-  const [toggler, setToggler] = useState(true);
+import {
+  doctorOnlineSubmit,
+  doctorOnlineSubmit1,
+} from '../../actions/onlineConsult';
+const OnlineConsult = ({
+  docDashFunc,
+  doctorOnlineSubmit,
+  doctorOnlineSubmit1,
+  history,
+}) => {
+  const [toggler, setToggler] = useState(false);
   const [medName, setMedName] = useState('');
   const [medTime, setMedTime] = useState('');
   const [medDuration, setMedDuration] = useState('');
@@ -13,18 +21,18 @@ const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit,doctorOnlineSubmit1, hi
 
   const handleConcat = (e) => {
     e.preventDefault();
-    console.log(medName+medTime);
+    console.log(medName + medTime);
     var c = medName + ',' + medTime;
     console.log(c);
     setMedicines([...medicines, c]);
-    
+
     setMedTime('');
     setMedName('');
   };
   useEffect(() => {
     console.log(medicines);
-  },[medicines]);
-  const { currentReport,currentAppReport } = docDashFunc;
+  }, [medicines]);
+  const { currentReport, currentAppReport } = docDashFunc;
   const handleOnlineSubmit = (e) => {
     e.preventDefault();
     var updateReport = {
@@ -40,11 +48,14 @@ const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit,doctorOnlineSubmit1, hi
     }
     console.log(updateReport);
     console.log(currentAppReport);
-    if(currentAppReport!={}&&currentAppReport.progress == 'e'){
-      doctorOnlineSubmit1({currentAppReport, updateReport});
+    if (
+      currentAppReport != {} &&
+      (currentAppReport.progress == 'e' || currentAppReport.progress == 'd')
+    ) {
+      doctorOnlineSubmit1({ currentAppReport, updateReport });
       history.push('/doctor/dashboard');
     } else {
-      doctorOnlineSubmit({currentReport,updateReport});
+      doctorOnlineSubmit({ currentReport, updateReport });
       history.push('/doctor/dashboard');
     }
   };
@@ -86,14 +97,6 @@ const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit,doctorOnlineSubmit1, hi
               <h5>Medication</h5>
             </div>
             <div className='col s4'></div>
-            <div className='col s4'>
-              <button
-                onClick={handleConcat}
-                className='btn-floating btn-large waves-effect waves-light green'
-              >
-                <i class='fa fa-plus'>add</i>
-              </button>
-            </div>
           </div>
           <div className='form-group row'>
             <div className='col-sm-9'>
@@ -130,6 +133,17 @@ const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit,doctorOnlineSubmit1, hi
               />
             </div>
           </div>
+          <div className='row'>
+            <div className='col-sm-2'></div>
+            <div className='col-sm-4'>
+              <button
+                onClick={handleConcat}
+                className='btn btn-floating btn-large waves-effect waves-light green'
+              >
+                <i className='fa fa-plus'>add</i>
+              </button>
+            </div>
+          </div>
           <div className='form-group row'>
             <div className='col-sm-9'>
               <MDBInput
@@ -158,7 +172,10 @@ const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit,doctorOnlineSubmit1, hi
               />
             </div>
           </div>
-          <button onClick={handleOnlineSubmit}>Submit</button>
+          <div className='row'></div>
+          <button className='btn btn-warning' onClick={handleOnlineSubmit}>
+            Submit
+          </button>
         </form>
       </Container>
     </div>
@@ -169,8 +186,8 @@ const mapStateToProps = (state) => ({
   docDashFunc: state.docDashFunc,
 });
 
-const mapDispatchToProps = dispatch => ({
-  doctorOnlineSubmit: (data) => dispatch(doctorOnlineSubmit(data)),  
-  doctorOnlineSubmit1: (data) => dispatch(doctorOnlineSubmit1(data))  
-})
+const mapDispatchToProps = (dispatch) => ({
+  doctorOnlineSubmit: (data) => dispatch(doctorOnlineSubmit(data)),
+  doctorOnlineSubmit1: (data) => dispatch(doctorOnlineSubmit1(data)),
+});
 export default connect(mapStateToProps, mapDispatchToProps)(OnlineConsult);
