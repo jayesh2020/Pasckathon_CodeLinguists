@@ -89,3 +89,16 @@ export const cancelAppointment = ({appoint}) => async dispatch => {
     });
   });
 }
+
+
+export const clearCurrentAppReport = () => async dispatch => {
+  dispatch({
+    type: 'CLEAR_CURRENT_APP_REPORT'
+  });
+}
+export const setCurrentAppReport = ({appoint}) => async dispatch => {
+  dispatch({
+      type: 'SET_CURRENT_APP_REPORT',
+      payload: appoint
+  });
+}

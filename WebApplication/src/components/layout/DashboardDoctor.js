@@ -16,6 +16,8 @@ import {
 import {
   getAppointments,
   setCurrentReport,
+  setCurrentAppReport,
+  clearCurrentAppReport,
   cancelAppointment,
   getReports,
   clearCurrentReport,
@@ -28,6 +30,8 @@ const DashboardDoctor = ({
   docDashFunc,
   getAppointments,
   setCurrentReport,
+  setCurrentAppReport,
+  clearCurrentAppReport,
   cancelAppointment,
   changeProgress,
   clearCurrentReport,
@@ -41,8 +45,8 @@ const DashboardDoctor = ({
   const [toggler, setToggler] = useState(false);
   const [consultToggler, setConsultToggler] = useState(false);
   const clickHandler = (appoint) => {
-    setCurrentReport({ appoint });
-    history.push('/doctor/report');
+    setCurrentAppReport({ appoint });
+    history.push('/doctor/onlineconsult');
   };
 
   const cancelAppoint = (appoint) => {
@@ -137,8 +141,8 @@ const DashboardDoctor = ({
                     width='30%'
                   />
                   <p> Name: {appoint.patientName}</p>
-                  <p>Appointment Time: {appoint.appointmentTime}</p>
-                  <p>Appointment Date: {appoint.diseasePrediction}</p>
+                  <p>Appointment Time: {appoint.time}</p>
+                  <p>Appointment Date: {appoint.date}</p>
                   <button
                     className='btn btn-warning text-white'
                     onClick={(e) => {
@@ -209,9 +213,11 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getAppointments: (uid) => dispatch(getAppointments(uid)),
   setCurrentReport: (data) => dispatch(setCurrentReport(data)),
+  setCurrentAppReport: (data) => dispatch(setCurrentAppReport(data)),
   cancelAppointment: (data) => dispatch(cancelAppointment(data)),
   getReports: (uid) => dispatch(getReports(uid)),
   clearCurrentReport: () => dispatch(clearCurrentReport()),
+  clearCurrentAppReport: () => dispatch(clearCurrentAppReport()),
   changeProgress: (data) => dispatch(changeProgress(data)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardDoctor);

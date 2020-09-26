@@ -2,10 +2,10 @@ import axios from 'axios';
 import { firestore } from '../firebase/firebase';
 
 const predictionsHard = {
-  'Acne and Rosacea Photos': {
+  'Acne and Rosacea': {
     symtoms: [
       'Facial redness',
-      'Swollen, red bumps',
+      'Swollen and red bumps',
       'Eye problems',
       'Enlarged nose'
     ],
@@ -14,15 +14,15 @@ const predictionsHard = {
   'Eczema': {
     symtoms: [
       'Itch',
-      'Dry, sensitive skin',
-      'Inflame, discolored skin',
-      'Rough, leathery or scaly patches of skin',
+      'Dry and sensitive skin',
+      'Inflame and discolored skin',
+      'Rough and leathery or scaly patches of skin',
       'Oozing or crusting',
       'Hair loss'
     ],
     description: 'Atopic dermatitis usually develops in early childhood and is more common in people who have a family history of the condition. The main symptom is a rash that typically appears on the arms and behind the knees, but can also appear anywhere.Treatment includes avoiding soap and other irritants. Certain creams or ointments may also provide relief from the itching.'
   },
-  'Hair Loss Photos Alopecia and other Hair Diseases': {
+  'Hair Loss Alopecia and other Hair Diseases': {
     symtoms: [
       'Gradual thinning on top of head',
       'Receding hairline',
@@ -36,7 +36,7 @@ const predictionsHard = {
       'ugly duckling sign',
       'A sore that doesn’t heal',
       'Redness or a new swelling beyond the border of the mole',
-      'Change in sensation, such as itchiness, tenderness, or pain',
+      'Change in sensation such as itchiness or tenderness, or pain',
       'Family history of melanoma'
     ],
     description: 'Melanoma, also known as malignant melanoma, is a type of skin cancer that develops from the pigment-producing cells known as melanocytes. Melanomas typically occur in the skin but may rarely occur in the mouth, intestines or eye (uveal melanoma).'
@@ -45,10 +45,10 @@ const predictionsHard = {
     symtoms: [
       'Thickened',
       'Whitish to yellow-brown discoloration',
-      'Brittle, crumbly or ragged',
+      'Brittle and crumbly or ragged',
       'Distorted in shape',
       'Smelling slightly foul',
-      'A dark color, caused by debris building up under your nail'
+      'A dark color caused by debris building up under your nail'
     ],
     description: 'A severe case of nail fungus can be painful and may cause permanent damage to your nails. And it may lead to other serious infections that spread beyond your feet if you have a suppressed immune system due to medication, diabetes or other conditions.'
   },

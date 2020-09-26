@@ -52,12 +52,14 @@ export const bookAppointment = ({timeSlot, dateOf, report, selectedDoctor}) => a
     const data = {
         time: timeSlot,
         date: dateOf,
-        ...report
+        ...report,
+        progress: 'e'
     };
     const data1 = {
         time: timeSlot,
         date: dateOf,
-        ...report
+        ...report,
+        progress: 'e'
     }
     const re = await ref.collection('Appointments').add(data);
     const re1 = await firestore.doc(`Patients/${report.patientId}`).collection('Appointments').add(data1);

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { MDBContainer, MDBInputGroup,MDBInput, Container } from 'mdbreact';
 import { connect } from 'react-redux';
-import { doctorOnlineSubmit } from '../../actions/onlineConsult';
-const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit }) => {
-  const [toggler, setToggler] = useState(false);
+import { doctorOnlineSubmit, doctorOnlineSubmit1 } from '../../actions/onlineConsult';
+const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit,doctorOnlineSubmit1 }) => {
+  const [toggler, setToggler] = useState(true);
   const [medName, setMedName] = useState('');
   const [medTime, setMedTime] = useState('');
   const [medDuration, setMedDuration] = useState('');
@@ -24,7 +24,7 @@ const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit }) => {
   useEffect(() => {
     console.log(medicines);
   },[medicines]);
-  const { currentReport } = docDashFunc;
+  const { currentReport,currentAppReport } = docDashFunc;
   const handleOnlineSubmit = (e) => {
     e.preventDefault();
     var updateReport = {
@@ -38,11 +38,16 @@ const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit }) => {
         doctorDiseaseName,
       };
     }
-    doctorOnlineSubmit({currentReport, updateReport});
+    console.log(updateReport);
+    console.log(currentAppReport);
+    if(currentAppReport!={}&&currentAppReport.progress == 'e'){
+      doctorOnlineSubmit1({currentAppReport, updateReport});
+    } else {
+      doctorOnlineSubmit({currentReport,updateReport})
+    }
   };
   const toggle = () => {
-    if (toggler === true) setToggler(false);
-    else setToggler(true);
+    setToggler(!toggler);
   };
   return (
     <div>
@@ -58,7 +63,7 @@ const OnlineConsult = ({ docDashFunc, doctorOnlineSubmit }) => {
                   type='checkbox'
                   class='custom-control-input'
                   id='defaultChecked'
-                  checked={true}
+                  value={toggler}
                   onClick={toggle}
                 />
                 {toggler && (
@@ -163,6 +168,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  doctorOnlineSubmit: (data) => dispatch(doctorOnlineSubmit(data))  
+  doctorOnlineSubmit: (data) => dispatch(doctorOnlineSubmit(data)),  
+  doctorOnlineSubmit1: (data) => dispatch(doctorOnlineSubmit1(data))  
 })
 export default connect(mapStateToProps, mapDispatchToProps)(OnlineConsult);
