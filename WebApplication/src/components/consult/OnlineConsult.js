@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MDBContainer, MDBInputGroup, MDBInput, Container } from 'mdbreact';
 import { connect } from 'react-redux';
+
 import {
   doctorOnlineSubmit,
   doctorOnlineSubmit1,
@@ -97,6 +98,7 @@ const OnlineConsult = ({
               <h5>Medication</h5>
             </div>
             <div className='col s4'></div>
+
           </div>
           <div className='form-group row'>
             <div className='col-sm-9'>
@@ -134,6 +136,7 @@ const OnlineConsult = ({
             </div>
           </div>
           <div className='row'>
+
             <div className='col-sm-2'></div>
             <div className='col-sm-4'>
               <button
@@ -142,6 +145,7 @@ const OnlineConsult = ({
               >
                 <i className='fa fa-plus'>add</i>
               </button>
+
             </div>
           </div>
           <div className='form-group row'>
@@ -172,6 +176,7 @@ const OnlineConsult = ({
               />
             </div>
           </div>
+
           <div className='row'></div>
           <button className='btn btn-warning' onClick={handleOnlineSubmit}>
             Submit

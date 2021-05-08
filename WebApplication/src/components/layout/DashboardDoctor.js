@@ -15,6 +15,7 @@ import {
 } from 'mdbreact';
 import {
   getAppointments,
+  getHistory,
   setCurrentReport,
   setCurrentAppReport,
   clearCurrentAppReport,
@@ -28,6 +29,7 @@ const DashboardDoctor = ({
   history,
   auth,
   docDashFunc,
+  getHistory,
   getAppointments,
   setCurrentReport,
   setCurrentAppReport,
@@ -71,6 +73,7 @@ const DashboardDoctor = ({
     if (report.progress == 'a') {
       changeProgress({ report,status: 'b' });
     }
+    getHistory({report});
     setToggler(true);
   };
 
@@ -250,7 +253,6 @@ const DashboardDoctor = ({
           </MDBModalFooter>
         </MDBModal>
       </MDBContainer>
-      <Link to='/doctorsinfo'>doctorsinfo</Link>
     </div>
   );
 };
@@ -269,5 +271,6 @@ const mapDispatchToProps = (dispatch) => ({
   clearCurrentReport: () => dispatch(clearCurrentReport()),
   clearCurrentAppReport: () => dispatch(clearCurrentAppReport()),
   changeProgress: (data) => dispatch(changeProgress(data)),
+  getHistory: (data) => dispatch(getHistory(data)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardDoctor);

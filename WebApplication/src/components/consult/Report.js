@@ -60,8 +60,16 @@ const Report = ({report}) => {
                     {report.otherInfo && <h6>Other Info: {report.otherInfo}</h6>}
                     </div>}
                     <div className="divider"></div>
-                    
+                   
             </div>}
+            {report.hi && <div>
+                <h5 style={{color: "ff9800",fontWeight:1000}}>Medical History</h5>
+                {report.hi.map(h => <div>
+                        <p>Doctor Name: {h.doctor}</p>
+                        <p>Symtoms: {h.symptoms}</p>
+                        <p>Medicines: {h.medicines}</p>
+                    </div>)}
+                </div>}
         </div>
     )
 
