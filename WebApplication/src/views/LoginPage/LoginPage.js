@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useState, useEffect } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -6,22 +6,23 @@ import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
 import Email from "@material-ui/icons/Email";
 import People from "@material-ui/icons/People";
+import { auth, signInWithGoogle } from "../../app/firebase/firebase";
 // core components
-import Header from "components/Header/Header.js";
-import HeaderLinks from "components/Header/HeaderLinks.js";
-import Footer from "components/Footer/Footer.js";
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
-import Button from "components/CustomButtons/Button.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardHeader from "components/Card/CardHeader.js";
-import CardFooter from "components/Card/CardFooter.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
+import Header from "../../components/Header/Header.js";
+import HeaderLinks from "../../components/Header/HeaderLinks.js";
+import Footer from "../../components/Footer/Footer.js";
+import GridContainer from "../../components/Grid/GridContainer.js";
+import GridItem from "../../components/Grid/GridItem.js";
+import Button from "../../components/CustomButtons/Button.js";
+import Card from "../../components/Card/Card.js";
+import CardBody from "../../components/Card/CardBody.js";
+import CardHeader from "../../components/Card/CardHeader.js";
+import CardFooter from "../../components/Card/CardFooter.js";
+import CustomInput from "../../components/CustomInput/CustomInput.js";
 
-import styles from "assets/jss/material-kit-react/views/loginPage.js";
+import styles from "../../assets/jss/material-kit-react/views/loginPage.js";
 
-import image from "assets/img/bg7.jpg";
+import image from "../../assets/img/bg7.jpg";
 
 const useStyles = makeStyles(styles);
 
@@ -30,6 +31,31 @@ export default function LoginPage(props) {
   setTimeout(function() {
     setCardAnimation("");
   }, 700);
+  const [toggler,setToggler] = useState(false);
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+  useEffect(() => {
+    setTimeout(setToggler(true),3000);
+  })
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+
+    setUser({ ...user, [name]: value });
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const { email, password } = user;
+    const user1 = await auth.signInWithEmailAndPassword(email, password);
+    console.log(user1);
+    setUser({
+      email: "",
+      password: "",
+    });
+  };
   const classes = useStyles();
   const { ...rest } = props;
   return (
@@ -117,6 +143,8 @@ export default function LoginPage(props) {
                           </InputAdornment>
                         )
                       }}
+                      name="email"
+                      onChange={onChange}
                     />
                     <CustomInput
                       labelText="Password"
@@ -135,11 +163,13 @@ export default function LoginPage(props) {
                         ),
                         autoComplete: "off"
                       }}
+                      name="password"
+                      onChange={onChange}
                     />
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
-                    <Button simple color="primary" size="lg">
-                      Get started
+                    <Button simple color="primary" size="lg" onClick={onSubmit}>
+                      Login
                     </Button>
                   </CardFooter>
                 </form>

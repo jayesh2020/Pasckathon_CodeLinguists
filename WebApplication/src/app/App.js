@@ -3,7 +3,7 @@ import './App.scss';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import configureStore from './store/configureStore';
 import { Provider } from 'react-redux';
-import Signin from './sign-in/SigninPatient';
+import Signin from '../views/LoginPage/LoginPage';
 import Spinner from './components/layout/Spinner';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
